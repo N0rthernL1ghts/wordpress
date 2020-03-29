@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+# Designed to replace original, overcomplicated entrypoint script from official wordpress docker repository
+# Why not use already available tools instead?!
+
 function wp() {
   # Running as root in container is OK as long as all security implications are observed and maintained
   /usr/local/bin/wp --allow-root "$@"
