@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+function wp() {
+  # Running as root in container is OK as long as all security implications are observed and maintained
+  /usr/local/bin/wp --allow-root "$@"
+}
+
+echo "> Verifying 'Wordpress ${WP_VERSION}' installation..."
+if wp core version;
+then
+  echo "> Found 'Wordpress ${WP_VERSION}'"
+else
+  echo "> Downloading 'Wordpress ${WP_VERSION}'..."
+  wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
+fi
