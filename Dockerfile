@@ -7,8 +7,6 @@ WORKDIR /tmp/build/rootfs
 # Build root filesystem structure (overlay), and copy over neccessary files
 RUN    mkdir -p usr/local/bin \
     && mkdir -p usr/local/etc/php/conf.d/ \
-    && mkdir -p usr/src/ \
-    && mv /usr/src/wordpress                                usr/src/ \
     && mv /usr/local/etc/php/conf.d/error-logging.ini       usr/local/etc/php/conf.d/ \
     && mv /usr/local/etc/php/conf.d/opcache-recommended.ini usr/local/etc/php/conf.d/
 
