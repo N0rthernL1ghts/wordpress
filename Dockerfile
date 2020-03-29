@@ -46,6 +46,6 @@ ENV CRON_ENABLED          true
 
 RUN echo "* * * * * /usr/local/bin/php /var/www/${WEB_ROOT}/wp-cron.php" >> /etc/crontabs/www-data
 
-VOLUME ["/var/www/${WEB_ROOT}/wp-content"]
+VOLUME ["/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
 
 EXPOSE 80/TCP
