@@ -1,4 +1,5 @@
-FROM wordpress:php7.4-fpm-alpine AS wordpress-builder
+ARG WP_VERSION=5.3.2
+FROM wordpress:${WP_VERSION}-php7.4-fpm-alpine AS wordpress-builder
 
 USER root
 
@@ -38,7 +39,7 @@ COPY --from=wordpress-builder    /tmp/build/rootfs /
 COPY --from=wordpress:cli-php7.4 /usr/local/bin/wp /usr/local/bin/wp-cli
 
 ENV WP_CONTENT_ID         2bca7d694c6279bb79bbb642ba4305f9
-ENV WP_VERSION            5.3.2
+ENV WP_VERSION            ${WP_VERSION}
 ENV WP_LOCALE             en_US
 ENV CRON_ENABLED          true
 ENV VIRTUAL_HOST          your-domain.com
