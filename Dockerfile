@@ -14,7 +14,7 @@ RUN    mkdir -p usr/local/bin \
 
 ################################################# APP ##################################################################
 FROM nlss/php-nginx
-
+ARG WP_VERSION
 ENV APK_DEPS        "zlib-dev libzip-dev libpng-dev icu-dev imagemagick-dev"
 ENV APK_BUILD_DEPS  "curl-dev autoconf alpine-sdk"
 ENV APK_WP_CLI_DEPS "bash less mysql-client"
