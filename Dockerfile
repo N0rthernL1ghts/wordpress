@@ -47,4 +47,6 @@ RUN echo "* * * * * /usr/local/bin/php /var/www/${WEB_ROOT}/wp-cron.php" >> /etc
 
 VOLUME ["/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
 
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS 2
+
 EXPOSE 80/TCP
