@@ -41,6 +41,7 @@ ENV WP_CONTENT_ID         2bca7d694c6279bb79bbb642ba4305f9
 ENV WP_VERSION            5.3.2
 ENV WP_LOCALE             en_US
 ENV CRON_ENABLED          true
+ENV VIRTUAL_HOST          your-domain.com
 
 RUN echo "* * * * * /usr/local/bin/php /var/www/${WEB_ROOT}/wp-cron.php" >> /etc/crontabs/www-data
 
