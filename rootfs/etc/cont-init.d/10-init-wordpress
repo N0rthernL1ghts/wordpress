@@ -1,6 +1,8 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+DISABLE_WP_UPDATES="${ENFORCE_DISABLE_WP_UPDATES:-true}"
+
 # Designed to replace original, overcomplicated entrypoint script from official wordpress docker repository
 # Why not use already available tools instead?!
 
@@ -9,11 +11,16 @@ function wp() {
   /usr/local/bin/wp --allow-root "$@"
 }
 
-echo "> Verifying 'Wordpress ${WP_VERSION}' installation..."
+echo "> Verifying 'WordPress ${WP_VERSION}' installation..."
 if wp core version;
 then
-  echo "> Found 'Wordpress ${WP_VERSION}'"
+  echo "> Identified 'WordPress ${WP_VERSION}'"
 else
-  echo "> Downloading 'Wordpress ${WP_VERSION}'..."
+  echo "> Downloading 'WordPress ${WP_VERSION}'..."
   wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
+
+  if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
+    echo "> Disabling WordPress updates..."
+    cp "/etc/wp-mods" "/var/www/html" -r -T
+  fi
 fi
