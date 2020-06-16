@@ -38,7 +38,6 @@ COPY ["wp-config.php", "/var/www/html"]
 COPY --from=wordpress-builder    /tmp/build/rootfs /
 COPY --from=wordpress:cli-php7.4 /usr/local/bin/wp /usr/local/bin/wp-cli
 
-ENV WP_CONTENT_ID         2bca7d694c6279bb79bbb642ba4305f9
 ENV WP_VERSION            ${WP_VERSION}
 ENV WP_LOCALE             en_US
 ENV CRON_ENABLED          true
