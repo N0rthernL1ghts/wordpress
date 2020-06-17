@@ -43,7 +43,8 @@ ENV WP_LOCALE             en_US
 ENV CRON_ENABLED          true
 ENV VIRTUAL_HOST          your-domain.com
 
-RUN echo "* * * * * /usr/local/bin/php /var/www/${WEB_ROOT}/wp-cron.php" >> /etc/crontabs/www-data
+RUN echo "* * * * * /usr/local/bin/php /var/www/${WEB_ROOT}/wp-cron.php" >> /etc/crontabs/www-data \
+    && chmod a+x /usr/local/bin/wp
 
 VOLUME ["/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
 
