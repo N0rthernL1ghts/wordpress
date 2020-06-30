@@ -6,8 +6,8 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
 ### TODO
 * Out-of-the-box SSL support
 * Disable core updates
-* Install plugins on the fly using wp cli
-* Install themes on the fly using wp cli
+* Install/update plugins on the fly using wp cli (with versioning)
+* Install/update themes on the fly using wp cli (with versioning)
 * Apply theme and eventual plugin customizations using patch files
 * Support automatic install using ENV
 * Create users automatically using ENV
