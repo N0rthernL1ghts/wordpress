@@ -1,4 +1,4 @@
-ARG WP_VERSION=5.4.2
+ARG WP_VERSION=5.5.1
 FROM wordpress:${WP_VERSION}-php7.4-fpm-alpine AS wordpress-builder
 
 USER root
