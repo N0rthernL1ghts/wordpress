@@ -21,6 +21,6 @@ else
 
   if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
     echo "> Disabling WordPress updates..."
-    cp "/etc/wp-mods" "/var/www/html" -r -T
+    patch /var/www/html/wp-admin/update-core.php < /etc/wp-mods/wp-admin/update-core.php.patch
   fi
 fi
