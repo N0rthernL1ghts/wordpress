@@ -1,5 +1,5 @@
 --- update-core.php	2020-10-04 19:51:51.874573636 +0200
-+++ update-core-mod.php	2020-10-04 19:53:36.705858923 +0200
++++ update-core.php	2020-10-04 19:53:36.705858923 +0200
 @@ -917,6 +917,11 @@
  		wp_die( __( 'Sorry, you are not allowed to update this site.' ) );
  	}
