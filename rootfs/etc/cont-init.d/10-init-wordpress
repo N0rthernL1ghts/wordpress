@@ -1,26 +1,43 @@
 #!/usr/bin/with-contenv bash
-set -e
-
 DISABLE_WP_UPDATES="${ENFORCE_DISABLE_WP_UPDATES:-true}"
 
 # Designed to replace original, overcomplicated entrypoint script from official wordpress docker repository
 # Why not use already available tools instead?!
 
-function wp() {
-  # Running as root in container is OK as long as all security implications are observed and maintained
-  /usr/local/bin/wp --allow-root "$@"
+function disableUpdatesPatch() {
+  if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
+    echo "> Disabling WordPress updates..."
+    patch /var/www/html/wp-admin/update-core.php </etc/wp-mods/wp-admin/update-core.php.patch
+  fi
+}
+
+function deleteWordPress() {
+  echo "> Deleting WordPress installation (core files)"
+
+  # Instead of one-line find, we're taking a bit conservative approach and separating file and directory removal
+  # This is to ensure that this script never runs on unintended set of files as it's data loss risk
+  rm -rf "/var/www/${WEB_ROOT}/"{wp-includes,wp-admin}
+  rm -rf "/var/www/${WEB_ROOT}/"{.htaccess,index.php,license.txt,readme.html,wp-activate.php,wp-blog-header.php,wp-comments-post.php,wp-config-sample.php,wp-config.php,wp-cron.php,wp-links-opml.php,wp-load.php,wp-login.php,wp-mail.php,wp-settings.php,wp-signup.php,wp-trackback.php,xmlrpc.php}
 }
 
 echo "> Verifying 'WordPress ${WP_VERSION}' installation..."
-if wp core version;
-then
-  echo "> Identified 'WordPress ${WP_VERSION}'"
-else
-  echo "> Downloading 'WordPress ${WP_VERSION}'..."
-  wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
+WP_INSTALLED_VERSION="$(wp core version)"
 
-  if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
-    echo "> Disabling WordPress updates..."
-    patch /var/www/html/wp-admin/update-core.php < /etc/wp-mods/wp-admin/update-core.php.patch
-  fi
+if [ -z "${WP_INSTALLED_VERSION}" ]; then
+  echo "> WordPress is not present"
+  echo "> Downloading 'WordPress ${WP_VERSION}'..."
+  deleteWordPress
+  wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
+  disableUpdatesPatch
+elif [ "${WP_INSTALLED_VERSION}" != "${WP_VERSION}" ]; then
+  echo "> WordPress version mismatch"
+  echo "> Expected version: ${WP_VERSION}"
+  echo "> Detected version: ${WP_INSTALLED_VERSION}"
+  echo "> Scraping current files"
+  deleteWordPress
+  echo "> Downloading WordPress version '${WP_VERSION}'..."
+  wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
+  disableUpdatesPatch
+else
+  echo "> Identified 'WordPress ${WP_VERSION}'"
 fi
