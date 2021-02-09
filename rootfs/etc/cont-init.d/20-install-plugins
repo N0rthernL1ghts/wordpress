@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 set -e
 
-PLUGIN_LIST="${WP_PLUGIN_LIST:-}"
+PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
 
 echo "> Automated WordPress Plugin Installer"
 
