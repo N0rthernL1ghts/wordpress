@@ -9,7 +9,10 @@ WARNING: This feature is experimental and can fail. Proceed with caution
 ```
 
 This container can install plugins during container startup defined in environment variable WORDPRESS_PLUGIN_LIST
+
 If environment variable is left empty, or undefined, installer will skip.
+
+Plugins are not activated automatically; This is intentional.  
 
 Usage example:
 ```
