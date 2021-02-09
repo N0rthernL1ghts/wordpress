@@ -1,0 +1,25 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+PLUGIN_LIST="${WP_PLUGIN_LIST:-}"
+
+echo "> Automated WordPress Plugin Installer"
+
+if [ -z "${PLUGIN_LIST}" ]; then
+  echo "> No plugins defined. Skipping installation."
+  exit 0
+fi
+
+echo "> About to install defined plugins"
+for PLUGIN_NAME in ${PLUGIN_LIST}; do
+  IFS=':' read -ra PLUGIN <<<"${PLUGIN_NAME}"
+
+  WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
+
+  if [ -n "${PLUGIN[1]}" ]; then
+    WP_PLUGIN_INSTALL_ARGS="${WP_PLUGIN_INSTALL_ARGS} --version=${PLUGIN[1]}"
+  fi
+
+  echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
+  wp plugin install ${WP_PLUGIN_INSTALL_ARGS}
+done
