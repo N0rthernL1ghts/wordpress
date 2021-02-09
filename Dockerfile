@@ -15,7 +15,7 @@ RUN    mkdir -p usr/local/bin \
 ################################################# APP ##################################################################
 FROM nlss/php-nginx
 ARG WP_VERSION
-ENV APK_DEPS        "zlib-dev libzip-dev libpng-dev icu-dev imagemagick-dev"
+ENV APK_DEPS        "zlib-dev libzip-dev libpng-dev icu-dev imagemagick-dev patch"
 ENV APK_BUILD_DEPS  "curl-dev autoconf alpine-sdk"
 ENV APK_WP_CLI_DEPS "bash less mysql-client"
 
@@ -33,22 +33,25 @@ RUN apk add --update --no-cache ${APK_WP_CLI_DEPS} ${APK_DEPS} ${APK_BUILD_DEPS}
     && apk del ${APK_BUILD_DEPS} \
     && rm /tmp/* -rf
 
-ADD rootfs /
-COPY ["wp-config.php", "/var/www/html"]
 COPY --from=wordpress-builder    /tmp/build/rootfs /
 COPY --from=wordpress:cli-php7.4 /usr/local/bin/wp /usr/local/bin/wp-cli
+
 
 ENV WP_VERSION            ${WP_VERSION}
 ENV WP_LOCALE             en_US
 ENV CRON_ENABLED          true
 ENV VIRTUAL_HOST          your-domain.com
 
+ADD rootfs /
 RUN echo "* * * * * /usr/local/bin/php /var/www/${WEB_ROOT}/wp-cron.php" >> /etc/crontabs/www-data \
     && chmod a+x /usr/local/bin/wp
 
-VOLUME ["/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
+VOLUME ["/root/.wp-cli", "/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS 2
 ENV ENFORCE_DISABLE_WP_UPDATES   true
+ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE true
+
+COPY ["wp-config.php", "/var/www/html"]
 
 EXPOSE 80/TCP
