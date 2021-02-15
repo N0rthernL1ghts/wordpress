@@ -12,8 +12,8 @@ if [ -z "${PLUGIN_LIST}" ]; then
 fi
 
 echo "> About to install defined plugins"
-for PLUGIN_NAME in ${PLUGIN_LIST}; do
-  IFS=':' read -ra PLUGIN <<<"${PLUGIN_NAME}"
+for PLUGIN_EXPR in ${PLUGIN_LIST}; do
+  IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
 
   WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
 
