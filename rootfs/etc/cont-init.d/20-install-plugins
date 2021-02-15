@@ -15,17 +15,17 @@ echo "> About to install defined plugins"
 for PLUGIN_EXPR in ${PLUGIN_LIST}; do
   IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
 
-  WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
-
-  if [ -n "${PLUGIN[1]}" ]; then
-    WP_PLUGIN_INSTALL_ARGS="${WP_PLUGIN_INSTALL_ARGS} --version=${PLUGIN[1]}"
-  fi
-
   PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
 
   if [ -d "${PLUGIN_PATH}" ] || [ -f "${PLUGIN_PATH}.php" ]; then
     echo "> Plugin '${PLUGIN[0]}' already installed and will be skipped."
     continue
+  fi
+
+  WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
+
+  if [ -n "${PLUGIN[1]}" ]; then
+    WP_PLUGIN_INSTALL_ARGS="${WP_PLUGIN_INSTALL_ARGS} --version=${PLUGIN[1]}"
   fi
 
   echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
