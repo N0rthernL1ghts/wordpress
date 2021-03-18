@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 
-LATEST_TAG="$(git describe --tags --abbrev=0)"
-WP_VERSION="${1:-$LATEST_TAG}"
+WP_VERSION="${1:-}"
 
 if [ -z "${WP_VERSION}" ]; then
   echo "Error: WP_VERSION is null"
