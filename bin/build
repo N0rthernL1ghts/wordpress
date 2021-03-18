@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+LATEST_TAG="$(git describe --tags --abbrev=0)"
+WP_VERSION="${1:-$LATEST_TAG}"
+
+if [ -z "${WP_VERSION}" ]; then
+  echo "Error: WP_VERSION is null"
+  exit 1
+fi
+
+docker build --build-arg WP_VERSION=${WP_VERSION} --push --tag "nlss/wordpress:${WP_VERSION}" --tag "nlss/base-alpine:latest" .
