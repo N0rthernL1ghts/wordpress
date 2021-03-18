@@ -7,4 +7,5 @@ if [ -z "${WP_VERSION}" ]; then
   exit 1
 fi
 
-docker build --build-arg WP_VERSION=${WP_VERSION} --push --tag "nlss/wordpress:${WP_VERSION}" --tag "nlss/base-alpine:latest" .
+docker build --build-arg WP_VERSION=${WP_VERSION} --tag "nlss/wordpress:${WP_VERSION}" --tag "nlss/base-alpine:latest" .
+docker push --all-tags nlss/wordpress
