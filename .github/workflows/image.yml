@@ -1,4 +1,4 @@
-name: Build stable multiarch image
+name: Build docker WordPress image
 
 on:
   push:
