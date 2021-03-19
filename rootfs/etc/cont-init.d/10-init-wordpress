@@ -4,6 +4,11 @@ DISABLE_WP_UPDATES="${ENFORCE_DISABLE_WP_UPDATES:-true}"
 # Designed to replace original, overcomplicated entrypoint script from official wordpress docker repository
 # Why not use already available tools instead?!
 
+# Removes trailing zero if found
+# This is required due to inconsistencies between WodPress docker image versioning and wp-cli core download
+# If patch version is 0, it is not considered by wp-cli.
+WP_VERSION=$(echo "${WP_VERSION}" | sed --expression='s/.0//g');
+
 function disableUpdatesPatch() {
   if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
     echo "> Disabling WordPress updates..."
