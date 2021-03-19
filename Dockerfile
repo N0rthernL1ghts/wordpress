@@ -43,7 +43,7 @@ ENV CRON_ENABLED          true
 ENV VIRTUAL_HOST          your-domain.com
 
 ADD rootfs /
-RUN echo "* * * * * /usr/local/bin/wp cron event run --due-now" >> /etc/crontabs/www-data \
+RUN echo "*/5 * * * * /usr/local/bin/wp cron event run --due-now" >> /etc/crontabs/www-data \
     && chmod a+x /usr/local/bin/wp
 
 VOLUME ["/root/.wp-cli", "/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
