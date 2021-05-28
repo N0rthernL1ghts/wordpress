@@ -1,5 +1,5 @@
---- update-core.php	2021-03-19 19:23:29.391214787 +0100
-+++ update-core.php	2021-03-19 19:26:23.798962792 +0100
+--- update-core.php	2021-05-28 21:04:43.647362531 +0200
++++ update-core.php	2021-05-28 21:05:44.224559161 +0200
 @@ -1050,6 +1050,11 @@
  		wp_die( __( 'Sorry, you are not allowed to update this site.' ) );
  	}

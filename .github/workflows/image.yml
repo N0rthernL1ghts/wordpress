@@ -16,4 +16,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build image
-        run: build/bin/build 5.7.1
+        run: build/bin/build 5.7.2
