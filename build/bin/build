@@ -1,11 +1,18 @@
 #!/usr/bin/env sh
 
-WP_VERSION="${1:-}"
+WP_VERSIONS=${1:-""}
 
-if [ -z "${WP_VERSION}" ]; then
-  echo "Error: WP_VERSION is null"
+if [ -z "${WP_VERSIONS}" ]; then
+  echo "Error: WP_VERSIONS is null"
   exit 1
 fi
 
 docker buildx create --use --name build --node build --driver-opt network=host
-docker buildx build --pull --push --platform "linux/amd64,linux/armhf,linux/aarch64" --build-arg "WP_VERSION=${WP_VERSION}" --tag "nlss/wordpress:${WP_VERSION}" --tag "nlss/wordpress:latest" .
+
+# Loop through requested versions
+for TARGET_VERSION in ${WP_VERSIONS}
+do
+  echo "> Building WordPress ${TARGET_VERSION}"
+
+  docker buildx build --pull --push --build-arg "WP_VERSION=${TARGET_VERSION}" --platform "linux/amd64,linux/armhf,linux/aarch64" --tag "nlss/wordpress:${TARGET_VERSION}" .
+done

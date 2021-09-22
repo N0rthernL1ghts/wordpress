@@ -2,7 +2,7 @@
 
 MOD_FILE="mod-update-core.php"
 TARGET_FILE="update-core.php"
-PATCH_FILE="update-core.php.patch"
+PATCH_FILE="wp-admin-update-core.patch"
 
 set -e
 cd ./wp-src
@@ -45,7 +45,7 @@ sed -i "s/${MOD_FILE}/${TARGET_FILE}/g" "${PATCH_FILE}"
 
 echo "> Patch file created ${PATCH_FILE}"
 echo "> Please run: "
-echo "  cp './wp-src/${PATCH_FILE}' '../../rootfs/etc/wp-mods/wp-admin/'"
+echo "  cp './wp-src/${PATCH_FILE}' '../../patches/5.x.x/'"
 echo ""
 echo "> Don't forget to inspect the patch and THEN commit"
 echo "> Finished"

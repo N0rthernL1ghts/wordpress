@@ -1,6 +1,7 @@
 ARG PHP_VERSION=7.4
 ARG WP_VERSION=5.8.0
 FROM --platform=${TARGETPLATFORM} wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine AS wordpress-builder
+# As long as new version doesn't require changes to Dockerfile, we don't need separate files
 
 USER root
 
@@ -54,5 +55,6 @@ ENV ENFORCE_DISABLE_WP_UPDATES   true
 ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE true
 
 COPY ["wp-config.php", "/var/www/html"]
+COPY ["patches/${WP_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/wp-admin/update-core.php.patch"]
 
 EXPOSE 80/TCP

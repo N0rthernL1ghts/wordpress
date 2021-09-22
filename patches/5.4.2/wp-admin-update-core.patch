@@ -1,0 +1,14 @@
+--- update-core.php	2020-10-04 19:03:07.898527934 +0200
++++ update-core-mod.php	2020-10-04 19:04:59.434908923 +0200
+@@ -915,6 +915,11 @@
+ 		wp_die( __( 'Sorry, you are not allowed to update this site.' ) );
+ 	}
+ 
++        wp_die(
++            __( 'Sorry, you are not allowed to update this site.' ) .
++            ' Click <a href="https://github.com/N0rthernL1ghts/wordpress/wiki/WordPress-Core-Updates">here</a> to learn why.'
++        );
++
+ 	check_admin_referer( 'upgrade-translations' );
+ 
+ 	require_once ABSPATH . 'wp-admin/admin-header.php';
