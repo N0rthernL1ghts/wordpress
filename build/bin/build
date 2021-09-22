@@ -16,7 +16,7 @@ for TARGET_VERSION in ${WP_VERSIONS}; do
 
   docker buildx build --pull --push --build-arg "WP_VERSION=${TARGET_VERSION}" --platform "linux/amd64,linux/armhf,linux/aarch64" --tag "nlss/wordpress:${TARGET_VERSION}" .
 
-  if [ "${TARGET_VERSION}" == "${WP_LATEST_VERSION}"]; then
+  if [ "${TARGET_VERSION}" = "${WP_LATEST_VERSION}" ]; then
     docker buildx build --pull --push --build-arg "WP_VERSION=${TARGET_VERSION}" --platform "linux/amd64,linux/armhf,linux/aarch64" --tag "nlss/wordpress:latest" .
   fi
 done
