@@ -34,6 +34,7 @@ RUN apk add --update --no-cache ${APK_WP_CLI_DEPS} ${APK_DEPS} ${APK_BUILD_DEPS}
     && docker-php-ext-enable redis apcu imagick \
     && apk del ${APK_BUILD_DEPS} \
     && rm /tmp/* -rf
+# TODO: Official WordPress has upgraded imagick to 5.x
 
 COPY --from=wordpress-builder    /tmp/build/rootfs /
 COPY --from=wordpress:cli-php7.4 /usr/local/bin/wp /usr/local/bin/wp-cli
