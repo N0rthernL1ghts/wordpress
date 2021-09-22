@@ -7,5 +7,5 @@ if [ -z "${WP_VERSION}" ]; then
   exit 1
 fi
 
-docker build --build-arg WP_VERSION=${WP_VERSION} --tag "nlss/wordpress:${WP_VERSION}" --tag "nlss/wordpress:latest" .
-docker push --all-tags nlss/wordpress
+docker buildx create --use --name build --node build --driver-opt network=host
+docker buildx build --pull --push --platform "linux/amd64,linux/armhf,linux/aarch64" --build-arg "WP_VERSION=${WP_VERSION}" --tag "nlss/wordpress:${WP_VERSION}" --tag "nlss/wordpress:latest" .

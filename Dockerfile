@@ -1,6 +1,6 @@
 ARG PHP_VERSION=7.4
 ARG WP_VERSION=5.8.0
-FROM wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine AS wordpress-builder
+FROM --platform=${TARGETPLATFORM} wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine AS wordpress-builder
 
 USER root
 
@@ -14,7 +14,7 @@ RUN    mkdir -p usr/local/bin \
 
 
 ################################################# APP ##################################################################
-FROM nlss/php-nginx:${PHP_VERSION}
+FROM --platform=${TARGETPLATFORM} nlss/php-nginx:${PHP_VERSION}
 ARG WP_VERSION
 ENV APK_DEPS        "zlib-dev libzip-dev libpng-dev icu-dev imagemagick-dev patch"
 ENV APK_BUILD_DEPS  "curl-dev autoconf alpine-sdk"
