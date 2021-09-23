@@ -4,6 +4,7 @@ echo "> Downloading WordPress ${WP_VERSION} ..."
 
 # Removes trailing zero if found
 WP_SHORT_VERSION=$(echo "${WP_VERSION}" | sed --expression='s/.0//g');
+echo "> Short Version: ${WP_SHORT_VERSION}"
 
 wp --allow-root --path="/tmp" core download --locale="${WP_LOCALE}" --version="${WP_SHORT_VERSION}"
 

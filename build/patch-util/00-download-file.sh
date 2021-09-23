@@ -1,8 +1,15 @@
 #!/usr/bin/env sh
 set -e
 
+WP_VERSION="${1:-}"
+
+if [ -z "${WP_VERSION}" ]; then
+  echo "> Error: WP_VERSION is not specified"
+  exit 1
+fi
+
 echo "> Building helper image..."
-docker build -t local/wp-patch-util .
+docker build --build-arg "WP_VERSION=${WP_VERSION}" -t local/wp-patch-util .
 mkdir wp-src/ -p
 echo ""
 echo "> Running helper container..."
