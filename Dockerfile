@@ -19,21 +19,23 @@ COPY --from=wordpress /usr/local/lib/php/test       /usr/local/lib/php/test/
 # Stage 3 - Final
 FROM --platform=${TARGETPLATFORM} nlss/php-nginx:${PHP_VERSION}
 # As long as new version doesn't require changes to Dockerfile, we don't need separate files
-ARG WP_VERSION
+
+ENV APK_RUNTIME_DEPS      "zlib-dev libzip-dev libpng-dev icu-dev imagemagick-dev patch"
+ENV APK_WP_CLI_DEPS       "bash less mysql-client"
+RUN apk add --update --no-cache ${APK_WP_CLI_DEPS} ${APK_RUNTIME_DEPS} 
+
 
 COPY --from=wordpress-rootfs     / /
 COPY --from=wordpress:cli-php7.4 /usr/local/bin/wp /usr/local/bin/wp-cli
 
-ENV APK_RUNTIME_DEPS      "zlib-dev libzip-dev libpng-dev icu-dev imagemagick-dev patch"
-ENV APK_WP_CLI_DEPS       "bash less mysql-client"
+ARG WP_VERSION
 ENV WP_VERSION            ${WP_VERSION}
 ENV WP_LOCALE             en_US
 ENV CRON_ENABLED          true
 ENV VIRTUAL_HOST          your-domain.com
 
 ADD rootfs /
-RUN apk add --update --no-cache ${APK_WP_CLI_DEPS} ${APK_RUNTIME_DEPS} \
-    && echo "*/5 * * * * /usr/local/bin/wp cron event run --due-now" >> /etc/crontabs/www-data \
+RUN echo "*/5 * * * * /usr/local/bin/wp cron event run --due-now" >> /etc/crontabs/www-data \
     && chmod a+x /usr/local/bin/wp
 
 VOLUME ["/root/.wp-cli", "/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
