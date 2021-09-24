@@ -30,5 +30,7 @@ for TARGET_VERSION in ${WP_VERSIONS}; do
     --cache-to "type=local,dest=${CACHE_DIR},mode=max" \
     --build-arg "WP_VERSION=${TARGET_VERSION}" \
     --platform "${TARGET_PLATFORMS}" \
-    ${IMAGE_TAGS[@]}
+    ${IMAGE_TAGS[@]} &
+
+  sleep 2
 done
