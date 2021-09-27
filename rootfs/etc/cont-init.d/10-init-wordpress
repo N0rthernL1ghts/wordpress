@@ -12,7 +12,7 @@ WP_VERSION=$(echo "${WP_VERSION}" | sed --expression='s/.0//g');
 function disableUpdatesPatch() {
   if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
     echo "> Disabling WordPress updates..."
-    patch /var/www/html/wp-admin/update-core.php </etc/wp-mods/wp-admin/wp-admin-update-core.patch
+    patch /var/www/html/wp-admin/update-core.php </etc/wp-mods/wp-admin-update-core.patch
   fi
 }
 
