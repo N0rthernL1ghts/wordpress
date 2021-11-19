@@ -136,7 +136,7 @@ target "5.8.0" {
 
 target "5.8.1" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.8.1", "docker.io/nlss/wordpress:latest"]
+  tags     = ["docker.io/nlss/wordpress:5.8.1"]
   args = {
     WP_VERSION = "5.8.1"
   }
