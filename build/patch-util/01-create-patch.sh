@@ -3,6 +3,7 @@
 MOD_FILE="mod-update-core.php"
 TARGET_FILE="update-core.php"
 PATCH_FILE="wp-admin-update-core.patch"
+WP_VERSION="${1:-}"
 
 set -e
 cd ./wp-src
@@ -44,8 +45,18 @@ echo "> Fixing patch header"
 sed -i "s/${MOD_FILE}/${TARGET_FILE}/g" "${PATCH_FILE}"
 
 echo "> Patch file created ${PATCH_FILE}"
-echo "> Please run: "
-echo "  cp './wp-src/${PATCH_FILE}' '../../patches/5.x.x/'"
+
+if [ -n "${WP_VERSION}" ]; then
+  echo "> WordPress version defined: ${WP_VERSION}"
+  echo "> Copying the patch file..."
+  mkdir "../../patches/${WP_VERSION}" -p
+  cp -v "./wp-src/${PATCH_FILE}" "../../patches/${WP_VERSION}/"
+else
+  echo "> Please run: "
+  echo "  cp './wp-src/${PATCH_FILE}' '../../patches/5.x.x/'"
+fi
+
+
 echo ""
 echo "> Don't forget to inspect the patch and THEN commit"
 echo "> Finished"
