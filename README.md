@@ -3,6 +3,15 @@ WorPress docker image, powered by nginx/php-fpm combo and managed by s6 supervis
 
 Attempt to fix several of WordPress anti-patterns in ready to deploy container
 
+#### Installation
+
+You can use public build:
+```
+nlss/wordpress:VERSION_NUMBER
+
+```
+Replace version number with desired version, eg. 5.8.2.
+
 ### Automatic plugin installer
 ```
 WARNING: This feature is experimental and can fail. Proceed with caution
