@@ -29,7 +29,8 @@ COPY --from=nlss/php-nginx:7.4 ["/etc/services.d/php-fpm/", "/etc/services.d/php
 # Add nginx service and configuration
 COPY --from=nlss/php-nginx:7.4 ["/etc/services.d/nginx/", "/etc/services.d/nginx/"]
 COPY --from=nlss/php-nginx:7.4 ["/etc/nginx/",            "/etc/nginx/"]
-COPY --from=nlss/php-nginx:7.4 ["/var/",                  "/var/"]
+COPY --from=nlss/php-nginx:7.4 ["/var/log/nginx/",        "/var/log/nginx/"]
+COPY --from=nlss/php-nginx:7.4 ["/var/www/",              "/var/www/"]
 
 # Install gomplate
 COPY --from=hairyhenderson/gomplate:v3.10.0-alpine ["/bin/gomplate", "/usr/local/bin/"]
@@ -49,10 +50,13 @@ COPY ["patches/${WP_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
 # Stage 3 - Final
 FROM --platform=${TARGETPLATFORM} wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine
 
-RUN apk add --update --no-cache patch less mysql-client nginx tzdata
+RUN apk add --update --no-cache patch less mysql-client tzdata
 
 COPY --from=rootfs ["/", "/"]
-RUN echo "*/5 * * * * /usr/local/bin/wp cron event run --due-now" >> /etc/crontabs/www-data \
+
+RUN mv /etc/nginx/conf.d /etc/nginx/http.d \
+    && apk add --update --no-cache nginx \
+    && echo "*/5 * * * * /usr/local/bin/wp cron event run --due-now" >> /etc/crontabs/www-data \
     && chmod a+x /usr/local/bin/wp
 
 ARG WP_VERSION
