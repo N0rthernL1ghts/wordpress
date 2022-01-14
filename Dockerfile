@@ -60,7 +60,7 @@ ENV WP_VERSION                       ${WP_VERSION}
 ENV WP_LOCALE                        en_US
 ENV VIRTUAL_HOST                     your-domain.com
 ENV S6_KEEP_ENV                      1
-#ENV S6_BEHAVIOUR_IF_STAGE2_FAILS     2
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS     2
 ENV ENFORCE_DISABLE_WP_UPDATES       true
 ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE true
 ENV CRON_ENABLED                     true
