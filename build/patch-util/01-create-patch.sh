@@ -49,11 +49,11 @@ echo "> Patch file created ${PATCH_FILE}"
 if [ -n "${WP_VERSION}" ]; then
   echo "> WordPress version defined: ${WP_VERSION}"
   echo "> Copying the patch file..."
-  mkdir "../../patches/${WP_VERSION}" -p
-  cp -v "./${PATCH_FILE}" "../../patches/${WP_VERSION}/"
+  mkdir "../../../patches/${WP_VERSION}" -p
+  cp -v "./${PATCH_FILE}" "../../../patches/${WP_VERSION}/"
 else
   echo "> Please run: "
-  echo "  cp './wp-src/${PATCH_FILE}' '../../patches/5.x.x/'"
+  echo "  cp './wp-src/${PATCH_FILE}' '../../../patches/5.x.x/'"
 fi
 
 
