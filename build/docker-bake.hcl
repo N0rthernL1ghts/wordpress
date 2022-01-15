@@ -32,7 +32,7 @@ target "5.3.1" {
 
 target "5.3.2" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.3.2"]
+  tags     = ["docker.io/nlss/wordpress:5.3.2", "docker.io/nlss/wordpress:5.3"]
   args = {
     WP_VERSION = "5.3.2"
   }
@@ -56,7 +56,7 @@ target "5.4.1" {
 
 target "5.4.2" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.4.2"]
+  tags     = ["docker.io/nlss/wordpress:5.4.2", "docker.io/nlss/wordpress:5.4"]
   args = {
     WP_VERSION = "5.4.2"
   }
@@ -72,7 +72,7 @@ target "5.5.1" {
 
 target "5.5.3" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.5.3"]
+  tags     = ["docker.io/nlss/wordpress:5.5.3", "docker.io/nlss/wordpress:5.5"]
   args = {
     WP_VERSION = "5.5.3"
   }
@@ -96,7 +96,7 @@ target "5.6.1" {
 
 target "5.6.2" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.6.2"]
+  tags     = ["docker.io/nlss/wordpress:5.6.2", "docker.io/nlss/wordpress:5.6"]
   args = {
     WP_VERSION = "5.6.2"
   }
@@ -120,7 +120,7 @@ target "5.7.1" {
 
 target "5.7.2" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.7.2"]
+  tags     = ["docker.io/nlss/wordpress:5.7.2", "docker.io/nlss/wordpress:5.7"]
   args = {
     WP_VERSION = "5.7.2"
   }
