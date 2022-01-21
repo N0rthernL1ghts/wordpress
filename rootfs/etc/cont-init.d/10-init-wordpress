@@ -13,6 +13,8 @@ function disableUpdatesPatch() {
   if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
     echo "> Disabling WordPress updates..."
     patch /var/www/html/wp-admin/update-core.php </etc/wp-mods/wp-admin-update-core.patch
+    echo "> Making the patched file read-only..."
+    chmod 0440 /var/www/html/wp-admin/update-core.php
   fi
 }
 
