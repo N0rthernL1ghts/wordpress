@@ -1,11 +1,24 @@
 #!/usr/bin/with-contenv bash
-set -e
+
+# Check if plugin installed. This is very basic check that doesn't involve database
+function isPluginInstalled() {
+  if [ -d "${PLUGIN_PATH}" ] || [ -f "${PLUGIN_PATH}.php" ]; then
+    return 0
+  fi
+  return 1
+}
+
+# Install plugin
+function installPlugin() {
+  wp plugin install "${@}" >/dev/null 2>&1
+  sleep 0.5
+}
 
 PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
+PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
 WP_CONTENT_PATH="/var/www/${WEB_ROOT}/wp-content"
 
 echo "> Automated WordPress Plugin Installer"
-
 if [ -z "${PLUGIN_LIST}" ]; then
   echo "> No plugins defined. Skipping installation."
   exit 0
@@ -17,7 +30,7 @@ for PLUGIN_EXPR in ${PLUGIN_LIST}; do
 
   PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
 
-  if [ -d "${PLUGIN_PATH}" ] || [ -f "${PLUGIN_PATH}.php" ]; then
+  if isPluginInstalled; then
     echo "> Plugin '${PLUGIN[0]}' already installed and will be skipped."
     continue
   fi
@@ -29,5 +42,36 @@ for PLUGIN_EXPR in ${PLUGIN_LIST}; do
   fi
 
   echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
-  wp plugin install ${WP_PLUGIN_INSTALL_ARGS}
+  installPlugin "${WP_PLUGIN_INSTALL_ARGS}" &
 done
+
+echo "> Waiting for all plugins to install..."
+wait
+
+# Plugins are installed concurrently, so we need to verify if installed, separately
+echo "> About to verify install of defined plugins"
+
+FAILED_COUNT=0
+
+for PLUGIN_EXPR in ${PLUGIN_LIST}; do
+  IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
+
+  PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
+
+  if isPluginInstalled; then
+    echo "> Plugin '${PLUGIN[0]}' installed"
+    continue
+  fi
+
+  ((FAILED_COUNT=FAILED_COUNT+1))
+  echo "> Warning: Plugin '${PLUGIN[0]}' failed to install"
+done
+
+echo "> Total of ${FAILED_COUNT} plugins failed to install"
+
+if [ "${PLUGIN_STRICT_INSTALL}" = "true" ] && [ ${FAILED_COUNT} != "0" ]; then
+  echo "> WORDPRESS_PLUGIN_INSTALL_STRICT is set to true. Terminating with non-zero exit code"
+  exit 1
+fi
+
+exit 0
