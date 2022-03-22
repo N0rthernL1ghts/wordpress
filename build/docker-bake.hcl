@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["5.3.0", "5.3.1", "5.3.2", "5.4.0", "5.4.1", "5.4.2", "5.5.1", "5.5.3", "5.6.0", "5.6.1", "5.6.2", "5.7.0", "5.7.1", "5.7.2", "5.8.0", "5.8.1", "5.8.2", "5.8.3", "5.9.0"]
+  targets = ["5.3.0", "5.3.1", "5.3.2", "5.4.0", "5.4.1", "5.4.2", "5.5.1", "5.5.3", "5.6.0", "5.6.1", "5.6.2", "5.7.0", "5.7.1", "5.7.2", "5.8.0", "5.8.1", "5.8.2", "5.8.3", "5.9.0", "5.9.1"]
 }
 
 target "build-dockerfile" {
@@ -160,8 +160,16 @@ target "5.8.3" {
 
 target "5.9.0" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.9.0", "docker.io/nlss/wordpress:5.9", "docker.io/nlss/wordpress:latest"]
+  tags     = ["docker.io/nlss/wordpress:5.9.0"]
   args = {
     WP_VERSION = "5.9.0"
+  }
+}
+
+target "5.9.1" {
+  inherits = ["build-dockerfile", "build-platforms", "build-common"]
+  tags     = ["docker.io/nlss/wordpress:5.9.1", "docker.io/nlss/wordpress:5.9", "docker.io/nlss/wordpress:latest"]
+  args = {
+    WP_VERSION = "5.9.1"
   }
 }
