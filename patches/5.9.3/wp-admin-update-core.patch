@@ -1,0 +1,14 @@
+--- update-core.php	2022-05-25 19:16:03.906128294 +0200
++++ update-core.php	2022-05-25 19:16:56.079812565 +0200
+@@ -1096,6 +1096,11 @@
+ 		wp_die( __( 'Sorry, you are not allowed to update this site.' ) );
+ 	}
+ 
++	wp_die(
++		__( 'Sorry, you are not allowed to update this site.' ) .
++		' Click <a href="https://github.com/N0rthernL1ghts/wordpress/wiki/WordPress-Core-Updates">here</a> to learn why.'
++	);
++
+ 	check_admin_referer( 'upgrade-core' );
+ 
+ 	// Do the (un)dismiss actions before headers, so that they can redirect.
