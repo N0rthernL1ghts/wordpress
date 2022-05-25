@@ -61,7 +61,8 @@ RUN mv /etc/nginx/conf.d /etc/nginx/http.d \
 
 ARG WP_VERSION
 ENV WP_VERSION                       ${WP_VERSION}
-ENV WP_LOCALE                        en_US
+ARG WP_LOCALE                        en_US
+ENV WP_LOCALE                        ${WP_LOCALE}
 ENV VIRTUAL_HOST                     your-domain.com
 ENV S6_KEEP_ENV                      1
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS     2
