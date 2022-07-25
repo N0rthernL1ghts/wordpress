@@ -12,10 +12,10 @@ nlss/wordpress
 
 You can also use specific version of WordPress:
 ```
-nlss/wordpress:5.8.0
+nlss/wordpress:6.0.0
 ```
 
-Replace version number with desired version, eg. 5.8.2.
+Replace version number with desired version, eg. 6.0.1.
 
 ### Automatic plugin installer
 ```
