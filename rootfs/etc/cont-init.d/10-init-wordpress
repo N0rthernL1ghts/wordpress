@@ -7,7 +7,7 @@ DISABLE_WP_UPDATES="${ENFORCE_DISABLE_WP_UPDATES:-true}"
 # Removes trailing zero if found
 # This is required due to inconsistencies between WodPress docker image versioning and wp-cli core download
 # If patch version is 0, it is not considered by wp-cli.
-WP_VERSION=$(echo "${WP_VERSION}" | sed --expression='s/.0//g');
+WP_VERSION=$(echo "${WP_VERSION}" | sed --expression='s/.0$//g');
 
 function disableUpdatesPatch() {
   if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
