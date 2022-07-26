@@ -2,6 +2,20 @@
 # Designed to replace original, overcomplicated entrypoint script from official wordpress docker repository
 # Why not use already available tools instead?!
 
+# Register exit handler
+trap scriptExitHandler EXIT
+
+function scriptExitHandler() {
+  LAST_EXIT_CODE=$?
+  if [ "${LAST_EXIT_CODE}" = "0" ]; then
+    echp "> Script finished successfully"
+    exit "${LAST_EXIT_CODE}"
+  fi
+
+  echo "> Script finished with an error"
+  exit "${LAST_EXIT_CODE}"
+}
+
 # Applies patch for making WordPress updates impossible
 function disableUpdatesPatch() {
   DISABLE_WP_UPDATES="${ENFORCE_DISABLE_WP_UPDATES:-true}"
