@@ -1,15 +1,10 @@
 #!/usr/bin/with-contenv bash
-DISABLE_WP_UPDATES="${ENFORCE_DISABLE_WP_UPDATES:-true}"
-
 # Designed to replace original, overcomplicated entrypoint script from official wordpress docker repository
 # Why not use already available tools instead?!
 
-# Removes trailing zero if found
-# This is required due to inconsistencies between WodPress docker image versioning and wp-cli core download
-# If patch version is 0, it is not considered by wp-cli.
-WP_VERSION=$(echo "${WP_VERSION}" | sed --expression='s/.0$//g');
-
+# Applies patch for making WordPress updates impossible
 function disableUpdatesPatch() {
+  DISABLE_WP_UPDATES="${ENFORCE_DISABLE_WP_UPDATES:-true}"
   if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
     echo "> Disabling WordPress updates..."
     patch /var/www/html/wp-admin/update-core.php </etc/wp-mods/wp-admin-update-core.patch
@@ -18,6 +13,7 @@ function disableUpdatesPatch() {
   fi
 }
 
+# Deletes known WordPress files
 function deleteWordPress() {
   echo "> Deleting WordPress installation (core files)"
 
@@ -27,24 +23,38 @@ function deleteWordPress() {
   rm -rf "/var/www/${WEB_ROOT}/"{.htaccess,index.php,license.txt,readme.html,wp-activate.php,wp-blog-header.php,wp-comments-post.php,wp-config-sample.php.php,wp-cron.php,wp-links-opml.php,wp-load.php,wp-login.php,wp-mail.php,wp-settings.php,wp-signup.php,wp-trackback.php,xmlrpc.php}
 }
 
-echo "> Verifying 'WordPress ${WP_VERSION}' installation..."
-WP_INSTALLED_VERSION="$(wp core version)"
+# Main function
+function main() {
+  # Removes trailing zero if found
+  # This is required due to inconsistencies between WodPress docker image versioning and wp-cli core download
+  # If patch version is 0, it is not considered by wp-cli.
+  WP_VERSION=$(echo "${WP_VERSION:?}" | sed --expression='s/.0$//g')
+  WP_LOCALE="${WP_LOCALE:?}"
 
-if [ -z "${WP_INSTALLED_VERSION}" ]; then
-  echo "> WordPress is not present"
-  echo "> Downloading 'WordPress ${WP_VERSION}'..."
-  deleteWordPress
-  wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
-  disableUpdatesPatch
-elif [ "${WP_INSTALLED_VERSION}" != "${WP_VERSION}" ]; then
-  echo "> WordPress version mismatch"
-  echo "> Expected version: ${WP_VERSION}"
-  echo "> Detected version: ${WP_INSTALLED_VERSION}"
-  echo "> Scraping current files"
-  deleteWordPress
-  echo "> Downloading WordPress version '${WP_VERSION}'..."
-  wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
-  disableUpdatesPatch
-else
-  echo "> Identified 'WordPress ${WP_VERSION}'"
-fi
+  echo "> Verifying 'WordPress ${WP_VERSION}' installation..."
+  WP_INSTALLED_VERSION="$(wp core version)"
+
+  set -e
+
+  if [ -z "${WP_INSTALLED_VERSION}" ]; then
+    echo "> WordPress is not present"
+    echo "> Downloading 'WordPress ${WP_VERSION}'..."
+    deleteWordPress
+    wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
+    disableUpdatesPatch
+  elif [ "${WP_INSTALLED_VERSION}" != "${WP_VERSION}" ]; then
+    echo "> WordPress version mismatch"
+    echo "> Expected version: ${WP_VERSION}"
+    echo "> Detected version: ${WP_INSTALLED_VERSION}"
+    echo "> Scraping current files"
+    deleteWordPress
+    echo "> Downloading WordPress version '${WP_VERSION}'..."
+    wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
+    disableUpdatesPatch
+  else
+    echo "> Identified 'WordPress ${WP_VERSION}'"
+  fi
+}
+
+main "${@}"
+exit $?
