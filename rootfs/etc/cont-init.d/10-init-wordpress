@@ -8,7 +8,7 @@ trap scriptExitHandler EXIT
 function scriptExitHandler() {
   LAST_EXIT_CODE=$?
   if [ "${LAST_EXIT_CODE}" = "0" ]; then
-    echp "> Script finished successfully"
+    echo "> Script finished successfully"
     exit "${LAST_EXIT_CODE}"
   fi
 
