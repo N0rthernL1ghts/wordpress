@@ -60,16 +60,16 @@ RUN mv /etc/nginx/conf.d /etc/nginx/http.d \
     && chmod a+x /usr/local/bin/wp
 
 ARG WP_VERSION
-ENV WP_VERSION                       ${WP_VERSION}
-ARG WP_LOCALE                        en_US
-ENV WP_LOCALE                        ${WP_LOCALE}
-ENV VIRTUAL_HOST                     your-domain.com
-ENV S6_KEEP_ENV                      1
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS     2
-ENV ENFORCE_DISABLE_WP_UPDATES       true
-ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE true
-ENV CRON_ENABLED                     true
-ENV WEB_ROOT                         html
+ENV WP_VERSION="${WP_VERSION}"
+ARG WP_LOCALE="en_US"
+ENV WP_LOCALE=${WP_LOCALE}
+ENV VIRTUAL_HOST=your-domain.com
+ENV S6_KEEP_ENV=1
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+ENV ENFORCE_DISABLE_WP_UPDATES=true
+ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE=true
+ENV CRON_ENABLED=true
+ENV WEB_ROOT=html
 
 WORKDIR "/var/www/${WEB_ROOT}/"
 VOLUME ["/root/.wp-cli", "/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
