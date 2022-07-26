@@ -1,5 +1,19 @@
 #!/usr/bin/with-contenv bash
 
+# Register exit handler
+trap scriptExitHandler EXIT
+
+function scriptExitHandler() {
+  LAST_EXIT_CODE=$?
+  if [ "${LAST_EXIT_CODE}" = "0" ]; then
+    echo "> Script finished successfully"
+    exit "${LAST_EXIT_CODE}"
+  fi
+
+  echo "> Script finished with an error"
+  exit "${LAST_EXIT_CODE}"
+}
+
 # Check if plugin installed. This is very basic check that doesn't involve database
 function isPluginInstalled() {
   if [ -d "${PLUGIN_PATH}" ] || [ -f "${PLUGIN_PATH}.php" ]; then
@@ -14,64 +28,68 @@ function installPlugin() {
   sleep 0.5
 }
 
-PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
-PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
-WP_CONTENT_PATH="/var/www/${WEB_ROOT}/wp-content"
+# Main function
+function main() {
+  PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
+  PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
+  WP_CONTENT_PATH="/var/www/${WEB_ROOT}/wp-content"
 
-echo "> Automated WordPress Plugin Installer"
-if [ -z "${PLUGIN_LIST}" ]; then
-  echo "> No plugins defined. Skipping installation."
-  exit 0
-fi
-
-echo "> About to install defined plugins"
-for PLUGIN_EXPR in ${PLUGIN_LIST}; do
-  IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
-
-  PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
-
-  if isPluginInstalled; then
-    echo "> Plugin '${PLUGIN[0]}' already installed and will be skipped."
-    continue
+  echo "> Automated WordPress Plugin Installer"
+  if [ -z "${PLUGIN_LIST}" ]; then
+    echo "> No plugins defined. Skipping installation."
+    return 0
   fi
 
-  WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
+  echo "> About to install defined plugins"
+  for PLUGIN_EXPR in ${PLUGIN_LIST}; do
+    IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
 
-  if [ -n "${PLUGIN[1]}" ]; then
-    WP_PLUGIN_INSTALL_ARGS="${WP_PLUGIN_INSTALL_ARGS} --version=${PLUGIN[1]}"
+    PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
+
+    if isPluginInstalled; then
+      echo "> Plugin '${PLUGIN[0]}' already installed and will be skipped."
+      continue
+    fi
+
+    WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
+
+    if [ -n "${PLUGIN[1]}" ]; then
+      WP_PLUGIN_INSTALL_ARGS="${WP_PLUGIN_INSTALL_ARGS} --version=${PLUGIN[1]}"
+    fi
+
+    echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
+    installPlugin "${WP_PLUGIN_INSTALL_ARGS}" &
+  done
+
+  echo "> Waiting for all plugins to install..."
+  wait
+
+  # Plugins are installed concurrently, so we need to verify if installed, separately
+  echo "> About to verify install of defined plugins"
+
+  FAILED_COUNT=0
+
+  for PLUGIN_EXPR in ${PLUGIN_LIST}; do
+    IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
+
+    PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
+
+    if isPluginInstalled; then
+      echo "> Plugin '${PLUGIN[0]}' installed"
+      continue
+    fi
+
+    ((FAILED_COUNT = FAILED_COUNT + 1))
+    echo "> Warning: Plugin '${PLUGIN[0]}' failed to install"
+  done
+
+  echo "> Total of ${FAILED_COUNT} plugins failed to install"
+
+  if [ "${PLUGIN_STRICT_INSTALL}" = "true" ] && [ ${FAILED_COUNT} != "0" ]; then
+    echo "> WORDPRESS_PLUGIN_INSTALL_STRICT is set to true. Terminating with non-zero exit code"
+    return 1
   fi
+}
 
-  echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
-  installPlugin "${WP_PLUGIN_INSTALL_ARGS}" &
-done
-
-echo "> Waiting for all plugins to install..."
-wait
-
-# Plugins are installed concurrently, so we need to verify if installed, separately
-echo "> About to verify install of defined plugins"
-
-FAILED_COUNT=0
-
-for PLUGIN_EXPR in ${PLUGIN_LIST}; do
-  IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
-
-  PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
-
-  if isPluginInstalled; then
-    echo "> Plugin '${PLUGIN[0]}' installed"
-    continue
-  fi
-
-  ((FAILED_COUNT=FAILED_COUNT+1))
-  echo "> Warning: Plugin '${PLUGIN[0]}' failed to install"
-done
-
-echo "> Total of ${FAILED_COUNT} plugins failed to install"
-
-if [ "${PLUGIN_STRICT_INSTALL}" = "true" ] && [ ${FAILED_COUNT} != "0" ]; then
-  echo "> WORDPRESS_PLUGIN_INSTALL_STRICT is set to true. Terminating with non-zero exit code"
-  exit 1
-fi
-
-exit 0
+main "${@}"
+exit $?
