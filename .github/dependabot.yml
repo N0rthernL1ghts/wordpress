@@ -16,3 +16,11 @@ updates:
       interval: "weekly"
     assignees:
       - "xZero707"
+
+  # Maintain Docker image dependencies for patch-util (build)
+  - package-ecosystem: "docker"
+    directory: "/build/patch-util"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "xZero707"
