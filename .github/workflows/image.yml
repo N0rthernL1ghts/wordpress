@@ -11,7 +11,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v2
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: cache
         with:
           path: /tmp/.buildx-cache
