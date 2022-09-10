@@ -6,7 +6,7 @@ ARG WP_VERSION=6.0.2
 FROM composer AS builder
 
 WORKDIR "/var/www/composer/"
-COPY ["./composer.lock", "./composer.json", "/var/www/composer/"]
+COPY ["./composer.json", "/var/www/composer/"]
 
 RUN set -eux \
     && composer install --dev --no-interaction --ignore-platform-reqs
