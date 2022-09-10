@@ -28,5 +28,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       -
-        name: Build image
-        run: build/bin/build
+        name: Build and push
+        uses: docker/bake-action@v2.2.0
+        with:
+          files: build/docker-bake.hcl
+          push: true
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max

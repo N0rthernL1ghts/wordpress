@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-docker buildx bake --set *."cache-from=type=gha"
-docker buildx bake --set *."cache-to=type=gha,mode=max"
-
-docker buildx  bake --pull --file "build/docker-bake.hcl"
