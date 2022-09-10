@@ -24,3 +24,11 @@ updates:
       interval: "weekly"
     assignees:
       - "xZero707"
+
+  # Maintain Docker image dependencies for tests-util (build)
+  - package-ecosystem: "docker"
+    directory: "/build/tests-util"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "xZero707"
