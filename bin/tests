@@ -4,6 +4,6 @@ set -ex
 #docker build -t localhost/tests-util build/tests-util
 docker run --init \
     --rm \
-    -it \
+    -i \
     -v "${PWD}:/var/www/html" \
   localhost/tests-util wp-patch-tests
