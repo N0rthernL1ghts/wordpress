@@ -22,7 +22,7 @@ FROM --platform=${TARGETPLATFORM} wordpress:cli-php${PHP_VERSION} AS wp-cli
 FROM scratch AS rootfs
 
 COPY --from=builder ["/usr/bin/composer", "/usr/local/bin/"]
-COPY --from=builder ["/var/www/composer/vendor", "/var/www/composer/vendor"]
+COPY --from=builder ["/var/www/composer", "/var/www/composer/"]
 
 # Install wp-cli
 COPY --from=wp-cli ["/usr/local/bin/wp", "/usr/local/bin/wp"]
