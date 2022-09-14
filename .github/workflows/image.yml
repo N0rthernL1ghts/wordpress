@@ -42,5 +42,5 @@ jobs:
           files: build/docker-bake.hcl
           push: true
           set: |
-            *.cache-from=type=gha
-            *.cache-to=type=gha,mode=max
+            *.cache-from=type=gha,scope=wordpress
+            *.cache-to=type=gha,scope=wordpress,mode=max

@@ -24,8 +24,8 @@ jobs:
         id: build
         with:
           context: build/tests-util/
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=tests
+          cache-to: type=gha,scope=tests,mode=max
           load: true
           tags: localhost/tests-util:latest
 
