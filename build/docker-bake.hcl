@@ -7,7 +7,7 @@ target "build-dockerfile" {
 }
 
 target "build-platforms" {
-  platforms = ["linux/amd64"]
+  platforms = ["linux/amd64", "linux/armhf", "linux/aarch64"]
 }
 
 target "build-common" {
