@@ -1,3 +1,5 @@
 .idea/
 wordpress.iml
 build/patch-util/wp-src/
+build/tests-util/composer.lock
+build/tests-util/vendor/
