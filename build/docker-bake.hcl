@@ -184,7 +184,7 @@ target "5_9_2" {
 
 target "5_9_3" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5.9.3", "docker.io/nlss/wordpress:5.9"]
+  tags     = ["docker.io/nlss/wordpress:5", "docker.io/nlss/wordpress:5.9", "docker.io/nlss/wordpress:5.9.3"]
   args = {
     WP_VERSION = "5.9.3"
   }
@@ -224,7 +224,7 @@ target "6_0_3" {
 
 target "6_1_0" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:6.1.0", "docker.io/nlss/wordpress:6.1", "docker.io/nlss/wordpress:latest"]
+  tags     = ["docker.io/nlss/wordpress:6", "docker.io/nlss/wordpress:6.1", "docker.io/nlss/wordpress:6.1.0", "docker.io/nlss/wordpress:latest"]
   args = {
     WP_VERSION = "6.1.0"
   }
