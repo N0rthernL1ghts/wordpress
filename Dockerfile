@@ -1,5 +1,5 @@
 ARG PHP_VERSION=7.4
-ARG WP_VERSION=5.9.0
+ARG WP_VERSION=6.1.0
 
 # WP CLI
 FROM --platform=${TARGETPLATFORM} wordpress:cli-php${PHP_VERSION} AS wp-cli
