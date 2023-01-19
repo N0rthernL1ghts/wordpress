@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["5_3_0", "5_3_1", "5_3_2", "5_4_0", "5_4_1", "5_4_2", "5_5_1", "5_5_3", "5_6_0", "5_6_1", "5_6_2", "5_7_0", "5_7_1", "5_7_2", "5_8_0", "5_8_1", "5_8_2", "5_8_3", "5_9_0", "5_9_1", "5_9_2", "5_9_3", "6_0_0", "6_0_1", "6_0_2", "6_0_3", "6_1_0"]
+  targets = ["5_3_0", "5_3_1", "5_3_2", "5_4_0", "5_4_1", "5_4_2", "5_5_1", "5_5_3", "5_6_0", "5_6_1", "5_6_2", "5_7_0", "5_7_1", "5_7_2", "5_8_0", "5_8_1", "5_8_2", "5_8_3", "5_9_0", "5_9_1", "5_9_2", "5_9_3", "6_0_0", "6_0_1", "6_0_2", "6_0_3", "6_1_0", "6_1_1"]
 }
 
 target "build-dockerfile" {
@@ -224,8 +224,16 @@ target "6_0_3" {
 
 target "6_1_0" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:6", "docker.io/nlss/wordpress:6.1", "docker.io/nlss/wordpress:6.1.0", "docker.io/nlss/wordpress:latest"]
+  tags     = ["docker.io/nlss/wordpress:6.1.0"]
   args = {
     WP_VERSION = "6.1.0"
+  }
+}
+
+target "6_1_1" {
+  inherits = ["build-dockerfile", "build-platforms", "build-common"]
+  tags     = ["docker.io/nlss/wordpress:6", "docker.io/nlss/wordpress:6.1", "docker.io/nlss/wordpress:6.1.1", "docker.io/nlss/wordpress:latest"]
+  args = {
+    WP_VERSION = "6.1.1"
   }
 }
