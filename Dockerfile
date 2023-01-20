@@ -20,9 +20,6 @@ COPY --from=nlss/base-alpine:3.14 ["/etc/services.d/cron/", "/etc/services.d/cro
 # Add php-fpm configuration
 COPY --from=nlss/php-nginx:7.4 ["/usr/local/etc/php-fpm.d/", "/usr/local/etc/php-fpm.d/"]
 
-# Add php-fpm service
-COPY --from=nlss/php-nginx:7.4 ["/etc/services.d/php-fpm/", "/etc/services.d/php-fpm/"]
-
 # Add nginx service and configuration
 COPY --from=nlss/php-nginx:7.4 ["/etc/services.d/nginx/", "/etc/services.d/nginx/"]
 COPY --from=nlss/php-nginx:7.4 ["/etc/nginx/",            "/etc/nginx/"]
