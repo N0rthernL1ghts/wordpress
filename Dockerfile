@@ -17,9 +17,6 @@ COPY --from=nlss/attr ["/usr/local/bin/attr", "/usr/local/bin/"]
 # Add crond service
 COPY --from=nlss/base-alpine:3.14 ["/etc/services.d/cron/", "/etc/services.d/cron/"]
 
-# Add container init tasks
-COPY --from=nlss/php-nginx:7.4 ["/etc/cont-init.d/", "/etc/cont-init.d/"]
-
 # Add php-fpm configuration
 COPY --from=nlss/php-nginx:7.4 ["/usr/local/etc/php-fpm.d/", "/usr/local/etc/php-fpm.d/"]
 

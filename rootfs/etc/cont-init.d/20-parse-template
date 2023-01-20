@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv sh
+set -e
+
+echo "Parsing virtual host template..."
+/usr/local/bin/gomplate -V \
+  -o /etc/nginx/sites-available/app.conf \
+  -f /etc/templates/tmpl-app-nginx.conf
+
+echo "Enabling virtual host..."
+ln -sf /etc/nginx/sites-available/app.conf /etc/nginx/sites-enabled/app.conf

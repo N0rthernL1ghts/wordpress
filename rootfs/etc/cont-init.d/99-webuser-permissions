@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv sh
+set -e
+
+attr /var/www true www-data:www-data 0770 2771/etc/cont-init.d
