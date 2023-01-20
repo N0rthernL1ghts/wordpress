@@ -17,12 +17,6 @@ COPY --from=nlss/attr ["/usr/local/bin/attr", "/usr/local/bin/"]
 # Add crond service
 COPY --from=nlss/base-alpine:3.14 ["/etc/services.d/cron/", "/etc/services.d/cron/"]
 
-# Add nginx service and configuration
-COPY --from=nlss/php-nginx:7.4 ["/etc/services.d/nginx/", "/etc/services.d/nginx/"]
-COPY --from=nlss/php-nginx:7.4 ["/etc/nginx/",            "/etc/nginx/"]
-COPY --from=nlss/php-nginx:7.4 ["/var/log/nginx/",        "/var/log/nginx/"]
-COPY --from=nlss/php-nginx:7.4 ["/var/www/",              "/var/www/"]
-
 # Install gomplate
 COPY --from=hairyhenderson/gomplate:v3.10.0-alpine ["/bin/gomplate", "/usr/local/bin/"]
 
