@@ -3,6 +3,15 @@ WorPress docker image, powered by nginx/php-fpm combo and managed by s6 supervis
 
 Attempt to fix several of WordPress anti-patterns in ready to deploy container
 
+#### Deprecation notice
+- 2023-01-20 Deprecation of WordPress versions prior to 5.9
+  * Preparation for PHP8.1 upgrade. 
+  * WordPress versions prior to 5.9 have no PHP8.1 support.
+  * PHP8.0 active support has ended since 2022-11-28, therefore skipping this release
+  * PHP7.4 reached end-of-life on 2022-11-28 and should not be used.
+  * Old images will remain, but will receive no further updates, until their eventual removal. Usage is not recommended.
+  * This decision will make build stack significantly lighter, ensuring much faster future builds
+
 #### Public builds (docker)
 
 You can use public build:
