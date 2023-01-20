@@ -15,7 +15,7 @@ COPY --from=wp-cli ["/usr/local/bin/wp", "/usr/local/bin/wp-cli"]
 COPY --from=nlss/attr ["/usr/local/bin/attr", "/usr/local/bin/"]
 
 # Add crond service
-COPY --from=nlss/base-alpine:3.14 ["/etc/services.d/cron/", "/etc/services.d/cron/"]
+COPY --from=nlss/base-alpine:3.16 ["/etc/services.d/cron/", "/etc/services.d/cron/"]
 
 # Install gomplate
 COPY --from=hairyhenderson/gomplate:v3.10.0-alpine ["/bin/gomplate", "/usr/local/bin/"]
