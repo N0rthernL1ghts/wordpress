@@ -11,6 +11,7 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * PHP7.4 reached end-of-life on 2022-11-28 and should not be used.
   * Old images will remain, but will receive no further updates, until their eventual removal. Usage is not recommended.
   * This decision will make build stack significantly lighter, ensuring much faster future builds
+- 2023-01-21 Retirement of PHP7.4. The king is dead, long live the king!
 
 #### Public builds (docker)
 
