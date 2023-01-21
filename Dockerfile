@@ -39,8 +39,7 @@ RUN apk add --update --no-cache patch less mysql-client tzdata
 
 COPY --from=rootfs ["/", "/"]
 
-RUN mv /etc/nginx/conf.d /etc/nginx/http.d \
-    && apk add --update --no-cache nginx \
+RUN apk add --update --no-cache nginx \
     && echo "*/5 * * * * /usr/local/bin/wp cron event run --due-now" >> /etc/crontabs/www-data \
     && chmod a+x /usr/local/bin/wp
 
