@@ -59,5 +59,6 @@ ENV WEB_ROOT=html
 WORKDIR "/var/www/${WEB_ROOT}/"
 VOLUME ["/root/.wp-cli", "/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
 
+LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>"
 ENTRYPOINT ["/init"]
 EXPOSE 80/TCP
