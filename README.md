@@ -12,6 +12,13 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * Old images will remain, but will receive no further updates, until their eventual removal. Usage is not recommended.
   * This decision will make build stack significantly lighter, ensuring much faster future builds
 - 2023-01-21 Retirement of PHP7.4. The king is dead, long live the king!
+- 2023-01-22 Replace NGINX + PHP-FPM combo with NGINX Unit
+  * Split and rebase image and rework build
+  * This is breaking change affecting all images
+  * If your setup was vanilla, it should work out of the box
+  * If you need nginx, you can set it up as a reverse proxy
+  * NGINX Unit is modern application server, replacing old PHP-FPM
+  * Independent benchmarks have show that NGINX Unit can handle much higher load and remain stable
 
 #### Public builds (docker)
 
@@ -48,7 +55,6 @@ Caveats:
 * If plugin install fails, container will exit with error
 
 ### TODO
-* Out-of-the-box SSL support
 * ~Disable core updates~
 * ~Install/update plugins on the fly using wp cli (with versioning)~
 * Install/update themes on the fly using wp cli (with versioning)
