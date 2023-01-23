@@ -36,10 +36,9 @@ ENV WP_LOCALE=${WP_LOCALE}
 ENV ENFORCE_DISABLE_WP_UPDATES=true
 ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE=true
 ENV CRON_ENABLED=true
-ENV WEB_ROOT=html
 
-WORKDIR "/var/www/${WEB_ROOT}/"
-VOLUME ["/root/.wp-cli", "/var/www/${WEB_ROOT}", "/var/www/${WEB_ROOT}/wp-content"]
+WORKDIR "/var/www/html/"
+VOLUME ["/root/.wp-cli", "/var/www/html", "/var/www/html/wp-content"]
 
 LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>"
 ENTRYPOINT ["/init"]

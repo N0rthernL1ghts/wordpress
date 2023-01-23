@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-/usr/local/bin/wp-cli --allow-root --path="/var/www/${WEB_ROOT}" "$@"
+/usr/local/bin/wp-cli --allow-root --path="/var/www/html" "$@"

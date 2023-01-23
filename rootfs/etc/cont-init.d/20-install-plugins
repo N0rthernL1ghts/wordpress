@@ -32,7 +32,7 @@ function installPlugin() {
 function main() {
   PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
   PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
-  WP_CONTENT_PATH="/var/www/${WEB_ROOT}/wp-content"
+  WP_CONTENT_PATH="/var/www/html/wp-content"
 
   echo "> Automated WordPress Plugin Installer"
   if [ -z "${PLUGIN_LIST}" ]; then

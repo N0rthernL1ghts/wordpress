@@ -33,8 +33,8 @@ function deleteWordPress() {
 
   # Instead of one-line find, we're taking a bit conservative approach and separating file and directory removal
   # This is to ensure that this script never runs on unintended set of files as it's data loss risk
-  rm -rf "/var/www/${WEB_ROOT}/"{wp-includes,wp-admin}
-  rm -rf "/var/www/${WEB_ROOT}/"{.htaccess,index.php,license.txt,readme.html,wp-activate.php,wp-blog-header.php,wp-comments-post.php,wp-config-sample.php.php,wp-cron.php,wp-links-opml.php,wp-load.php,wp-login.php,wp-mail.php,wp-settings.php,wp-signup.php,wp-trackback.php,xmlrpc.php}
+  rm -rf "/var/www/html/"{wp-includes,wp-admin}
+  rm -rf "/var/www/html/"{.htaccess,index.php,license.txt,readme.html,wp-activate.php,wp-blog-header.php,wp-comments-post.php,wp-config-sample.php.php,wp-cron.php,wp-links-opml.php,wp-load.php,wp-login.php,wp-mail.php,wp-settings.php,wp-signup.php,wp-trackback.php,xmlrpc.php}
 }
 
 # Main function
