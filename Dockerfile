@@ -1,8 +1,10 @@
 ARG PHP_VERSION=8.1
 ARG WP_VERSION=6.1.0
 
-# WP CLI
+# WordPress resources
 FROM --platform=${TARGETPLATFORM} wordpress:cli-php${PHP_VERSION} AS wp-cli
+FROM --platform=${TARGETPLATFORM} wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine AS wp-src
+
 
 
 # Build rootfs
@@ -16,7 +18,10 @@ COPY ["./rootfs/", "/"]
 
 # Configuration and patches
 ARG WP_VERSION
-COPY ["wp-config.php",                                    "/var/www/html/"]
+
+# Copy docker-optimized wp-config from official image
+COPY --from=wp-src ["/usr/src/wordpress/wp-config-docker.php", "/var/www/html/wp-config.php"]
+
 COPY ["patches/${WP_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
 
 
