@@ -19,8 +19,8 @@ COPY ["./rootfs/", "/"]
 # Configuration and patches
 ARG WP_VERSION
 
-# Copy docker-optimized wp-config from official image
-COPY --from=wp-src ["/usr/src/wordpress/wp-config-docker.php", "/var/www/html/wp-config.php"]
+# Copy WordPress source from the official image
+COPY --from=wp-src ["/usr/src/wordpress/", "/var/www/html/"]
 
 COPY ["patches/${WP_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
 
@@ -36,14 +36,12 @@ RUN chmod a+x /usr/local/bin/wp
 
 ARG WP_VERSION
 ENV WP_VERSION="${WP_VERSION}"
-ARG WP_LOCALE="en_US"
-ENV WP_LOCALE=${WP_LOCALE}
 ENV ENFORCE_DISABLE_WP_UPDATES=true
 ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE=true
 ENV CRON_ENABLED=true
 
 WORKDIR "/var/www/html/"
-VOLUME ["/root/.wp-cli", "/var/www/html", "/var/www/html/wp-content"]
+VOLUME ["/root/.wp-cli", "/var/www/html/wp-content"]
 
 LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>"
 ENTRYPOINT ["/init"]

@@ -22,19 +22,9 @@ function disableUpdatesPatch() {
   if [ "${DISABLE_WP_UPDATES}" != "false" ]; then
     echo "> Disabling WordPress updates..."
     patch /var/www/html/wp-admin/update-core.php </etc/wp-mods/wp-admin-update-core.patch
-    echo "> Making the patched file read-only..."
+    echo "> Marking the patched file read-only..."
     chmod 0440 /var/www/html/wp-admin/update-core.php
   fi
-}
-
-# Deletes known WordPress files
-function deleteWordPress() {
-  echo "> Deleting WordPress installation (core files)"
-
-  # Instead of one-line find, we're taking a bit conservative approach and separating file and directory removal
-  # This is to ensure that this script never runs on unintended set of files as it's data loss risk
-  rm -rf "/var/www/html/"{wp-includes,wp-admin}
-  rm -rf "/var/www/html/"{.htaccess,index.php,license.txt,readme.html,wp-activate.php,wp-blog-header.php,wp-comments-post.php,wp-config-sample.php.php,wp-cron.php,wp-links-opml.php,wp-load.php,wp-login.php,wp-mail.php,wp-settings.php,wp-signup.php,wp-trackback.php,xmlrpc.php}
 }
 
 # Main function
@@ -43,7 +33,6 @@ function main() {
   # This is required due to inconsistencies between WodPress docker image versioning and wp-cli core download
   # If patch version is 0, it is not considered by wp-cli.
   WP_VERSION=$(echo "${WP_VERSION:?}" | sed --expression='s/.0$//g')
-  WP_LOCALE="${WP_LOCALE:?}"
 
   echo "> Verifying 'WordPress ${WP_VERSION}' installation..."
   WP_INSTALLED_VERSION="$(wp core version)"
@@ -51,22 +40,26 @@ function main() {
   set -e
 
   if [ -z "${WP_INSTALLED_VERSION}" ]; then
-    echo "> WordPress is not present"
-    echo "> Downloading 'WordPress ${WP_VERSION}'..."
-    deleteWordPress
-    wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
-    disableUpdatesPatch
+    echo "> ERROR! WordPress installation does not seem to be present or valid. Continuing anyway..."
+    return 0
   elif [ "${WP_INSTALLED_VERSION}" != "${WP_VERSION}" ]; then
-    echo "> WordPress version mismatch"
-    echo "> Expected version: ${WP_VERSION}"
-    echo "> Detected version: ${WP_INSTALLED_VERSION}"
-    echo "> Scraping current files"
-    deleteWordPress
-    echo "> Downloading WordPress version '${WP_VERSION}'..."
-    wp core download --locale="${WP_LOCALE}" --version="${WP_VERSION}"
-    disableUpdatesPatch
+    echo "> WARNING! WordPress version mismatch"
+    echo "  Expected version: ${WP_VERSION}"
+    echo "  Detected version: ${WP_INSTALLED_VERSION}"
+    echo "> Seems like WordPress installation got updated outside image scope"
+    echo "  - This is dangerous as changes will not persist when container is recreated which might lead to inconsistencies between installation and the database."
+    echo "  - You should assume that recreating the container will render the website inoperable."
+    echo "  - Please make sure that you're running image: nlss/wordpress:${WP_VERSION}"
+    return 0
   else
     echo "> Identified 'WordPress ${WP_VERSION}'"
+
+    # This will apply patch once and again only if container is recreated
+    if [ ! -f "/var/www/patch-applied" ]; then
+        disableUpdatesPatch
+        touch "/var/www/patch-applied"
+    fi
+
   fi
 }
 

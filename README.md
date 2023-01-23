@@ -19,6 +19,9 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * If you need nginx, you can set it up as a reverse proxy
   * NGINX Unit is modern application server, replacing old PHP-FPM
   * Independent benchmarks have show that NGINX Unit can handle much higher load and remain stable
+- 2023-01-23 WordPress is no longer installed during runtime and it's bundled into the image
+  * This renders WP_LOCALE environment variable useless
+  * Instead, you will be offered to select locale during the first setup
 
 #### Public builds (docker)
 
