@@ -16,6 +16,10 @@ function scriptExitHandler() {
   exit "${LAST_EXIT_CODE}"
 }
 
+function reportUnhealthy() {
+    echo "${1:?REASON is required}" > "/tmp/.wp-unhealthy"
+}
+
 # Main function
 function main() {
   # Removes trailing zero if found
@@ -28,8 +32,11 @@ function main() {
 
   set -e
 
+  rm -f "/tmp/.wp-unhealthy"
   if [ -z "${WP_INSTALLED_VERSION}" ]; then
     echo "> ERROR! WordPress installation does not seem to be present or valid. Continuing anyway..."
+
+    reportUnhealthy "WP_NOT_PRESENT"
     return 0
   elif [ "${WP_INSTALLED_VERSION}" != "${WP_VERSION}" ]; then
     echo "> WARNING! WordPress version mismatch"
@@ -39,6 +46,7 @@ function main() {
     echo "  - This is dangerous as changes will not persist when container is recreated which might lead to inconsistencies between installation and the database."
     echo "  - You should assume that recreating the container will render the website inoperable."
     echo "  - Please make sure that you're running image: nlss/wordpress:${WP_VERSION}"
+    reportUnhealthy "WP_VERSION_MISMATCH"
     return 0
   else
     echo "> Identified 'WordPress ${WP_VERSION}'"

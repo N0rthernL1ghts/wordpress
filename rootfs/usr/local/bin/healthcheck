@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+function main() {
+    FULL_CHECK="${1:-false}"
+
+    if [ -f "/tmp/.wp-unhealthy" ]; then
+        echo "Error: WordPress health is compromised: $(cat "/tmp/.wp-unhealthy")"
+        return 1
+    fi
+
+    # If FULL_CHECK is not requested, site functionality check with curl is skipped
+    if [ "${FULL_CHECK}" = "false" ]; then
+        return 0
+    fi
+
+    curl -sSf --output "/dev/null" "http://localhost/"
+    return $?
+}
+
+main "${@}"
+exit $?
