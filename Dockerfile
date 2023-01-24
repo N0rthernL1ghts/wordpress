@@ -32,7 +32,9 @@ RUN apk add --update --no-cache patch
 
 COPY --from=rootfs ["/", "/"]
 
-RUN chmod a+x /usr/local/bin/wp
+RUN set -eux \
+    && chmod a+x /usr/local/bin/wp \
+    && wp-apply-patch "/etc/wp-mods/wp-admin-update-core.patch" "/var/www/html/wp-admin/update-core.php" "true"
 
 ARG WP_VERSION
 ENV WP_VERSION="${WP_VERSION}"
