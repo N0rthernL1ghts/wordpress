@@ -34,6 +34,7 @@ COPY --from=rootfs ["/", "/"]
 
 RUN set -eux \
     && chmod a+x /usr/local/bin/wp \
+    && mv "/var/www/html/wp-config-docker.php" "/var/www/html/wp-config.php" \
     && wp-apply-patch "/etc/wp-mods/wp-admin-update-core.patch" "/var/www/html/wp-admin/update-core.php" "true"
 
 ARG WP_VERSION
