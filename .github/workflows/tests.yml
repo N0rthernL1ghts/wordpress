@@ -20,7 +20,7 @@ jobs:
 
       -
         name: "Build tests-util image"
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         id: build
         with:
           context: build/tests-util/
