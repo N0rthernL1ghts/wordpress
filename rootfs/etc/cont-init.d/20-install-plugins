@@ -18,7 +18,7 @@ function scriptExitHandler() {
 function isPluginInstalled() {
   PLUGIN="${1:?PLUGIN is required}"
 
-  if [ -d "${PLUGIN_PATH}" ] && [ -f "${PLUGIN_PATH}/${PLUGIN}.php" ]; then
+  if [ -d "${PLUGIN_PATH:?}" ] && [ -f "${PLUGIN_PATH:?}/${PLUGIN}.php" ]; then
     return 0
   fi
   return 1
