@@ -16,7 +16,9 @@ function scriptExitHandler() {
 
 # Check if plugin installed. This is very basic check that doesn't involve database
 function isPluginInstalled() {
-  if [ -d "${PLUGIN_PATH}" ] || [ -f "${PLUGIN_PATH}.php" ]; then
+  PLUGIN="${1:?PLUGIN is required}"
+
+  if [ -d "${PLUGIN_PATH}" ] && [ -f "${PLUGIN_PATH}/${PLUGIN}.php" ]; then
     return 0
   fi
   return 1
@@ -44,20 +46,22 @@ function main() {
   for PLUGIN_EXPR in ${PLUGIN_LIST}; do
     IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
 
-    PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
+    PLUGIN_NAME="${PLUGIN[0]}"
+    PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN_NAME}"
+    export PLUGIN_PATH
 
-    if isPluginInstalled; then
-      echo "> Plugin '${PLUGIN[0]}' already installed and will be skipped."
+    if isPluginInstalled "${PLUGIN_NAME}"; then
+      echo "> Plugin '${PLUGIN_NAME}' already installed and will be skipped."
       continue
     fi
 
-    WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
+    WP_PLUGIN_INSTALL_ARGS="${PLUGIN_NAME}"
 
     if [ -n "${PLUGIN[1]}" ]; then
       WP_PLUGIN_INSTALL_ARGS="${WP_PLUGIN_INSTALL_ARGS} --version=${PLUGIN[1]}"
     fi
 
-    echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
+    echo "> Installing plugin '${PLUGIN_NAME}' version '${PLUGIN[1]}'"
     installPlugin "${WP_PLUGIN_INSTALL_ARGS}" &
   done
 
@@ -72,20 +76,22 @@ function main() {
   for PLUGIN_EXPR in ${PLUGIN_LIST}; do
     IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
 
-    PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
+    PLUGIN_NAME="${PLUGIN[0]}"
+    PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN_NAME}"
+    export PLUGIN_PATH
 
-    if isPluginInstalled; then
-      echo "> Plugin '${PLUGIN[0]}' installed"
+    if isPluginInstalled "${PLUGIN_NAME}"; then
+      echo "> Plugin '${PLUGIN_NAME}' installed"
       continue
     fi
 
     ((FAILED_COUNT = FAILED_COUNT + 1))
-    echo "> Warning: Plugin '${PLUGIN[0]}' failed to install"
+    echo "> Warning: Plugin '${PLUGIN_NAME}' failed to install"
   done
 
   echo "> Total of ${FAILED_COUNT} plugins failed to install"
 
-  if [ "${PLUGIN_STRICT_INSTALL}" = "true" ] && [ ${FAILED_COUNT} != "0" ]; then
+  if [ "${PLUGIN_STRICT_INSTALL}" = "true" ] && [ "${FAILED_COUNT}" != "0" ]; then
     echo "> WORDPRESS_PLUGIN_INSTALL_STRICT is set to true. Terminating with non-zero exit code"
     return 1
   fi
