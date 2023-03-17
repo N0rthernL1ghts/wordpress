@@ -6,51 +6,51 @@
 trap scriptExitHandler EXIT
 
 function scriptExitHandler() {
-  LAST_EXIT_CODE=$?
-  if [ "${LAST_EXIT_CODE}" = "0" ]; then
-    echo "> Script finished successfully"
-    exit "${LAST_EXIT_CODE}"
-  fi
+    LAST_EXIT_CODE=$?
+    if [ "${LAST_EXIT_CODE}" = "0" ]; then
+        echo "> Script finished successfully"
+        exit "${LAST_EXIT_CODE}"
+    fi
 
-  echo "> Script finished with an error"
-  exit "${LAST_EXIT_CODE}"
+    echo "> Script finished with an error"
+    exit "${LAST_EXIT_CODE}"
 }
 
 function reportUnhealthy() {
-    echo "${1:?REASON is required}" > "/tmp/.wp-unhealthy"
+    echo "${1:?REASON is required}" >"/tmp/.wp-unhealthy"
 }
 
 # Main function
 function main() {
-  # Removes trailing zero if found
-  # This is required due to inconsistencies between WodPress docker image versioning and wp-cli core download
-  # If patch version is 0, it is not considered by wp-cli.
-  WP_VERSION=$(echo "${WP_VERSION:?}" | sed --expression='s/.0$//g')
+    # Removes trailing zero if found
+    # This is required due to inconsistencies between WodPress docker image versioning and wp-cli core download
+    # If patch version is 0, it is not considered by wp-cli.
+    WP_VERSION=$(echo "${WP_VERSION:?}" | sed --expression='s/.0$//g')
 
-  echo "> Verifying 'WordPress ${WP_VERSION}' installation..."
-  WP_INSTALLED_VERSION="$(wp core version)"
+    echo "> Verifying 'WordPress ${WP_VERSION}' installation..."
+    WP_INSTALLED_VERSION="$(wp core version)"
 
-  set -e
+    set -e
 
-  rm -f "/tmp/.wp-unhealthy"
-  if [ -z "${WP_INSTALLED_VERSION}" ]; then
-    echo "> ERROR! WordPress installation does not seem to be present or valid. Continuing anyway..."
+    rm -f "/tmp/.wp-unhealthy"
+    if [ -z "${WP_INSTALLED_VERSION}" ]; then
+        echo "> ERROR! WordPress installation does not seem to be present or valid. Continuing anyway..."
 
-    reportUnhealthy "WP_NOT_PRESENT"
-    return 0
-  elif [ "${WP_INSTALLED_VERSION}" != "${WP_VERSION}" ]; then
-    echo "> WARNING! WordPress version mismatch"
-    echo "  Expected version: ${WP_VERSION}"
-    echo "  Detected version: ${WP_INSTALLED_VERSION}"
-    echo "> Seems like WordPress installation got updated outside image scope"
-    echo "  - This is dangerous as changes will not persist when container is recreated which might lead to inconsistencies between installation and the database."
-    echo "  - You should assume that recreating the container will render the website inoperable."
-    echo "  - Please make sure that you're running image: nlss/wordpress:${WP_VERSION}"
-    reportUnhealthy "WP_VERSION_MISMATCH"
-    return 0
-  else
-    echo "> Identified 'WordPress ${WP_VERSION}'"
-  fi
+        reportUnhealthy "WP_NOT_PRESENT"
+        return 0
+    elif [ "${WP_INSTALLED_VERSION}" != "${WP_VERSION}" ]; then
+        echo "> WARNING! WordPress version mismatch"
+        echo "  Expected version: ${WP_VERSION}"
+        echo "  Detected version: ${WP_INSTALLED_VERSION}"
+        echo "> Seems like WordPress installation got updated outside image scope"
+        echo "  - This is dangerous as changes will not persist when container is recreated which might lead to inconsistencies between installation and the database."
+        echo "  - You should assume that recreating the container will render the website inoperable."
+        echo "  - Please make sure that you're running image: nlss/wordpress:${WP_VERSION}"
+        reportUnhealthy "WP_VERSION_MISMATCH"
+        return 0
+    else
+        echo "> Identified 'WordPress ${WP_VERSION}'"
+    fi
 }
 
 main "${@}"
