@@ -33,6 +33,7 @@ function main() {
     PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
     PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
     WP_CONTENT_PATH="/var/www/html/wp-content"
+    CONCURRENCY_LIMIT="${CONCURRENCY_LIMIT:-4}"
 
     echo "> Automated WordPress Plugin Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
@@ -60,9 +61,9 @@ function main() {
         echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
         installPlugin "${WP_PLUGIN_INSTALL_ARGS}" &
 
-        # Run maximum of 2 plugin installs in parallel
-        while [ "$(jobs | wc -l)" -ge 2 ]; do
-            echo "  Waiting for batch of 2 plugins to install..."
+        # Run maximum of X plugin installs in parallel
+        while [ "$(jobs | wc -l)" -ge "${CONCURRENCY_LIMIT}" ]; do
+            echo "  Waiting for batch of ${CONCURRENCY_LIMIT} plugins to install..."
             wait
         done
     done
