@@ -59,9 +59,16 @@ function main() {
 
         echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
         installPlugin "${WP_PLUGIN_INSTALL_ARGS}" &
+
+        # Run maximum of 2 plugin installs in parallel
+        while [ "$(jobs | wc -l)" -ge 2 ]; do
+            echo "  Waiting for batch of 2 plugins to install..."
+            wait
+        done
     done
 
-    echo "> Waiting for all plugins to install..."
+
+    echo "> Waiting for all tasks to finish..."
     wait
 
     # Plugins are installed concurrently, so we need to verify if installed, separately
