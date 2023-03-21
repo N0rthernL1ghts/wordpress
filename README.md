@@ -44,18 +44,54 @@ WARNING: This feature is experimental and can fail. Proceed with caution
 
 This container can install plugins during container startup defined in environment variable WORDPRESS_PLUGIN_LIST
 
-If environment variable is left empty, or undefined, installer will skip.
+If environment variable is left empty, or undefined, installer will skip.<br/>
+Consider using custom image with plugins pre-installed in order to speed up container startup, and follow the best practices.
 
-Plugins are not activated automatically; This is intentional.  
 
 Usage example:
 ```
 # Notice that specific version can be defined
 WORDPRESS_PLUGIN_LIST=akismet:4.1.8 two-factor
+WP_PLUGINS_INSTALL_CONCURRENCY=10
 ```
+`WP_PLUGINS_INSTALL_CONCURRENCY` is optional, and defines how many plugins can be installed in parallel. Default is 5. <br/>
+If you have a lot of plugins, you can increase this value to speed up installation, but be aware that this can cause issues, such as overloaded network connection, or even server overload. <br/>
+You should not set this value to value higher than number of CPU threads ( * 1.5 ).
+
 Caveats:
 * If plugin was previously installed, and not defined on the list, it will NOT be removed.
-* If plugin install fails, container will exit with error
+* Plugins are not activated automatically; This is intentional.
+* If container startup speed is crucial (eg. start-on-demand ), don't use this feature, as it will block container startup until all plugins are installed.
+
+#### Extending image
+You can extend this image and install plugins during build time, using `wp-plugin` script. <br/>
+
+Example:
+```Dockerfile
+FROM nlss/wordpress:6.1.1 AS wp-plugins-installer
+
+RUN set -eux \
+    && export WP_PLUGINS_PATH="/var/www/html/wp-content/plugins" \
+    && wp-plugin download akismet 4.1.8 \
+    && wp-plugin download two-factor \
+    && wp-plugin download wp-mail-smtp
+
+# Final image
+FROM nlss/wordpress:6.1.1
+
+# Example: 
+# - Install ext-redis with pecl
+# - Enable ext-redis
+# - Remove pear/pecl cache
+# - Put production-ready php.ini in use 
+RUN set -eux \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/pear \
+    && cp "${PHP_INI_DIR}/php.ini-production" "${PHP_INI_DIR}/php.ini"
+    
+COPY --from=wp-plugins-installer ["/var/www/html/wp-content/plugins", "/var/www/html/wp-content/plugins"]
+```
 
 ### TODO
 * ~Disable core updates~
