@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+# Download plugin (curl)
+# $1 - plugin slug
+# $2 - plugin version (optional)
+# Returns 0 on success, X on failure
+download() {
+    PLUGIN_SLUG="${1:?download: PLUGIN_SLUG is required}"
+    PLUGIN_VERSION="${2:-}"
+
+    if [ -n "${PLUGIN_VERSION}" ]; then
+        PLUGIN_FILENAME="${PLUGIN_SLUG}.${PLUGIN_VERSION}.zip"
+    else
+        PLUGIN_FILENAME="${PLUGIN_SLUG}.zip"
+    fi
+
+    curl --fail -gsO "https://downloads.wordpress.org/plugin/${PLUGIN_FILENAME}" || return $?
+    echo "${PLUGIN_FILENAME}"
+    return 0
+}
+
+# Unpack plugin (unzip)
+# $1 - plugin slug
+# $2 - plugin version (optional)
+# $3 - target directory (optional)
+# Returns 0 on success, 1 on failure
+unpack() {
+    TARGET_PLUGINS_DIR="${TARGET_PLUGINS_DIR:?check: TARGET_PLUGINS_DIR is required}"
+    PLUGIN_SLUG="${1:?unpack: PLUGIN_SLUG is required}"
+    PLUGIN_VERSION="${2:-}"
+
+    if [ -n "${PLUGIN_VERSION}" ]; then
+        PLUGIN_FILENAME="${PLUGIN_SLUG}.${PLUGIN_VERSION}.zip"
+    else
+        PLUGIN_FILENAME="${PLUGIN_SLUG}.zip"
+    fi
+
+    if [ -f "${PLUGIN_FILENAME}" ]; then
+        unzip -qq -d "${TARGET_PLUGINS_DIR}" "${PLUGIN_FILENAME}" || return $?
+        rm "${PLUGIN_FILENAME}" -f
+        return 0
+    fi
+    return 1
+}
+
+# Check if plugin is installed
+# $1 - plugin slug
+# Returns 0 if plugin is installed, 1 otherwise
+check() {
+    TARGET_PLUGINS_DIR="${TARGET_PLUGINS_DIR:?check: TARGET_PLUGINS_DIR is required}"
+    PLUGIN_SLUG="${1:?check: PLUGIN_SLUG is required}"
+
+    PLUGIN_PATH="${TARGET_PLUGINS_DIR}/${PLUGIN_SLUG}"
+
+    # Check if plugin directory exists
+    if [ ! -d "${PLUGIN_PATH}" ]; then
+        return 1
+    fi
+
+    # Check if plugin file exists - if yes, plugin is probably installed successfully
+    if [ -f "${PLUGIN_PATH}/${PLUGIN_SLUG}.php" ]; then
+        return 0
+    fi
+
+    # Check if plugin directory is empty - if not, plugin is probably installed successfully
+    if [ "$(ls -A "${PLUGIN_PATH}")" ]; then
+        return 0
+    fi
+
+    # If we got here, then plugin is not installed
+    return 1
+}
+
+# Main function
+main() {
+    COMMAND="${1:?COMMAND is required}"
+    TARGET_PLUGINS_DIR="${WP_PLUGINS_PATH:?WP_PLUGINS_PATH is required}"
+
+    export TARGET_PLUGINS_DIR
+
+    # Execute command by calling function with the same name
+    case "${COMMAND}" in
+    download)
+        download "${@:2}"
+        return $?
+        ;;
+    unpack)
+        unpack "${@:2}"
+        return $?
+        ;;
+    check)
+        check "${@:2}"
+        return $?
+        ;;
+    *)
+        echo "Error: Unknown command '${COMMAND}'"
+        return 1
+        ;;
+    esac
+}
+
+main "${@}"
+exit $?

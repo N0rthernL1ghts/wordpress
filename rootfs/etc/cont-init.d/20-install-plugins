@@ -14,18 +14,40 @@ function scriptExitHandler() {
     exit "${LAST_EXIT_CODE}"
 }
 
-# Check if plugin installed. This is very basic check that doesn't involve database
-function isPluginInstalled() {
-    if [ -d "${PLUGIN_PATH}" ] || [ -f "${PLUGIN_PATH}.php" ]; then
-        return 0
+# Install plugin
+installPlugin() {
+    ARCHIVE="$(wp-plugin download "${@}" 2>/dev/null)"
+    if [ -z "${ARCHIVE}" ]; then
+        return 1
     fi
-    return 1
+
+    wp-plugin unpack "${@}"
+    return $?
 }
 
-# Install plugin
-function installPlugin() {
-    wp plugin install "${@}" >/dev/null 2>&1
-    sleep 0.5
+checkInstalled() {
+    FAILED_COUNT=0
+
+    for PLUGIN_EXPR in ${PLUGIN_LIST}; do
+        IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
+
+        PLUGIN_SLUG="${PLUGIN[0]}"
+
+        if wp-plugin check "${PLUGIN_SLUG}"; then
+            echo "> Plugin '${PLUGIN_SLUG}' installed"
+            continue
+        fi
+
+        ((FAILED_COUNT = FAILED_COUNT + 1))
+        echo "> Warning: Plugin '${PLUGIN_SLUG}' failed to install"
+    done
+
+    if [ "${FAILED_COUNT}" = "0" ]; then
+        return 0
+    fi
+
+    echo "> Total of ${FAILED_COUNT} plugins failed to install"
+    return 1
 }
 
 # Main function
@@ -33,7 +55,10 @@ function main() {
     PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
     PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
     WP_CONTENT_PATH="/var/www/html/wp-content"
+    WP_PLUGINS_PATH="${WP_CONTENT_PATH}/plugins"
     CONCURRENCY_LIMIT="${CONCURRENCY_LIMIT:-4}"
+
+    export WP_PLUGINS_PATH
 
     echo "> Automated WordPress Plugin Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
@@ -43,23 +68,25 @@ function main() {
 
     echo "> About to install defined plugins"
     for PLUGIN_EXPR in ${PLUGIN_LIST}; do
+
+        # Split plugin name and version
         IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
 
-        PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
+        PLUGIN_SLUG="${PLUGIN[0]}"
+        PLUGIN_VERSION="${PLUGIN[1]:-}"
 
-        if isPluginInstalled; then
-            echo "> Plugin '${PLUGIN[0]}' already installed and will be skipped."
+        if wp-plugin check "${PLUGIN_SLUG}"; then
+            echo "> Plugin '${PLUGIN_SLUG}' already installed and will be skipped."
             continue
         fi
 
-        WP_PLUGIN_INSTALL_ARGS="${PLUGIN[0]}"
-
-        if [ -n "${PLUGIN[1]}" ]; then
-            WP_PLUGIN_INSTALL_ARGS="${WP_PLUGIN_INSTALL_ARGS} --version=${PLUGIN[1]}"
+        if [ -n "${PLUGIN_VERSION}" ]; then
+            echo "> Installing plugin '${PLUGIN_SLUG}' version '${PLUGIN_VERSION}'"
+            installPlugin "${PLUGIN_SLUG}" "${PLUGIN_VERSION}" &
+        else
+            echo "> Installing plugin '${PLUGIN_SLUG}'"
+            installPlugin "${PLUGIN_SLUG}" &
         fi
-
-        echo "> Installing plugin '${PLUGIN[0]}' version '${PLUGIN[1]}'"
-        installPlugin "${WP_PLUGIN_INSTALL_ARGS}" &
 
         # Run maximum of X plugin installs in parallel
         while [ "$(jobs | wc -l)" -ge "${CONCURRENCY_LIMIT}" ]; do
@@ -68,35 +95,25 @@ function main() {
         done
     done
 
-
     echo "> Waiting for all tasks to finish..."
     wait
 
     # Plugins are installed concurrently, so we need to verify if installed, separately
     echo "> About to verify install of defined plugins"
 
-    FAILED_COUNT=0
+    if ! checkInstalled; then
+        echo "> Some plugins failed to install"
 
-    for PLUGIN_EXPR in ${PLUGIN_LIST}; do
-        IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
-
-        PLUGIN_PATH="${WP_CONTENT_PATH}/plugins/${PLUGIN[0]}"
-
-        if isPluginInstalled; then
-            echo "> Plugin '${PLUGIN[0]}' installed"
-            continue
+        if [ "${PLUGIN_STRICT_INSTALL}" = "true" ]; then
+            echo "> WORDPRESS_PLUGIN_INSTALL_STRICT is set to true. Terminating with non-zero exit code"
+            return 1
         fi
 
-        ((FAILED_COUNT = FAILED_COUNT + 1))
-        echo "> Warning: Plugin '${PLUGIN[0]}' failed to install"
-    done
-
-    echo "> Total of ${FAILED_COUNT} plugins failed to install"
-
-    if [ "${PLUGIN_STRICT_INSTALL}" = "true" ] && [ ${FAILED_COUNT} != "0" ]; then
-        echo "> WORDPRESS_PLUGIN_INSTALL_STRICT is set to true. Terminating with non-zero exit code"
-        return 1
+        return 0
     fi
+
+    echo "> All plugins installed successfully"
+    return 0
 }
 
 main "${@}"
