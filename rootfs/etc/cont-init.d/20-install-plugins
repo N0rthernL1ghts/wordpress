@@ -5,6 +5,13 @@ trap scriptExitHandler EXIT
 
 function scriptExitHandler() {
     LAST_EXIT_CODE=$?
+
+    # START_PROCESS is set only if script has passed the lock check
+    # This should ensure that the lock is lifted in any case
+    if [ -n "${WP_PLUGINS_PATH}" ] && [ -n "${START_PROCESS}" ]; then
+        rm "${WP_PLUGINS_PATH}/.installer-lock" -f
+    fi
+
     if [ "${LAST_EXIT_CODE}" = "0" ]; then
         echo "> Script finished successfully"
         exit "${LAST_EXIT_CODE}"
@@ -56,9 +63,19 @@ function main() {
     PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
     WP_CONTENT_PATH="/var/www/html/wp-content"
     WP_PLUGINS_PATH="${WP_CONTENT_PATH}/plugins"
-    CONCURRENCY_LIMIT="${CONCURRENCY_LIMIT:-4}"
 
-    export WP_PLUGINS_PATH
+    # Process locking to prevent multiple instances of this script from running at the same time
+    if [ -f "${WP_PLUGINS_PATH}/.installer-lock" ]; then
+        echo "> Installer is locked by another process. Skipping installation."
+        return 0
+    fi
+
+    START_PROCESS="$(date +%s)"
+
+    export WP_PLUGINS_PATH START_PROCESS
+    touch "${WP_PLUGINS_PATH}/.installer-lock"
+
+    CONCURRENCY_LIMIT="${CONCURRENCY_LIMIT:-4}"
 
     echo "> Automated WordPress Plugin Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
