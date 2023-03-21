@@ -75,7 +75,7 @@ function main() {
     export WP_PLUGINS_PATH START_PROCESS
     touch "${WP_PLUGINS_PATH}/.installer-lock"
 
-    CONCURRENCY_LIMIT="${CONCURRENCY_LIMIT:-4}"
+    CONCURRENCY_LIMIT="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
 
     echo "> Automated WordPress Plugin Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
