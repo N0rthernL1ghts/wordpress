@@ -1,26 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-# Register exit handler
-trap scriptExitHandler EXIT
-
-function scriptExitHandler() {
-    LAST_EXIT_CODE=$?
-
-    # START_PROCESS is set only if script has passed the lock check
-    # This should ensure that the lock is lifted in any case
-    if [ -n "${WP_PLUGINS_PATH}" ] && [ -n "${START_PROCESS}" ]; then
-        rm "${WP_PLUGINS_PATH}/.installer-lock" -f
-    fi
-
-    if [ "${LAST_EXIT_CODE}" = "0" ]; then
-        echo "> Script finished successfully"
-        exit "${LAST_EXIT_CODE}"
-    fi
-
-    echo "> Script finished with an error"
-    exit "${LAST_EXIT_CODE}"
-}
-
 # Install plugin
 installPlugin() {
     ARCHIVE="$(wp-plugin download "${@}" 2>/dev/null)"
@@ -57,27 +36,13 @@ checkInstalled() {
     return 1
 }
 
-# Main function
-function main() {
-    PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
-    PLUGIN_STRICT_INSTALL="${WORDPRESS_PLUGIN_INSTALL_STRICT:-false}"
-    WP_CONTENT_PATH="/var/www/html/wp-content"
-    WP_PLUGINS_PATH="${WP_CONTENT_PATH}/plugins"
-
-    # Process locking to prevent multiple instances of this script from running at the same time
-    if [ -f "${WP_PLUGINS_PATH}/.installer-lock" ]; then
-        echo "> Installer is locked by another process. Skipping installation."
-        return 0
-    fi
-
-    START_PROCESS="$(date +%s)"
-
-    export WP_PLUGINS_PATH START_PROCESS
-    touch "${WP_PLUGINS_PATH}/.installer-lock"
+# Plugins installer
+function taskInstallPlugins() {
+    export WP_PLUGINS_PATH
 
     CONCURRENCY_LIMIT="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
 
-    echo "> Automated WordPress Resources Installer"
+    echo "> Automated WordPress Plugins Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
         echo "> No plugins defined. Skipping installation."
         return 0
@@ -120,16 +85,31 @@ function main() {
 
     if ! checkInstalled; then
         echo "> Some plugins failed to install"
-
-        if [ "${PLUGIN_STRICT_INSTALL}" = "true" ]; then
-            echo "> WORDPRESS_PLUGIN_INSTALL_STRICT is set to true. Terminating with non-zero exit code"
-            return 1
-        fi
-
         return 0
     fi
 
     echo "> All plugins installed successfully"
+    return 0
+}
+
+# Main function
+main() {
+    PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
+    WP_CONTENT_PATH="/var/www/html/wp-content"
+    WP_PLUGINS_PATH="${WP_CONTENT_PATH}/plugins"
+
+    echo "> Automated WordPress Resources Installer"
+
+    export WP_CONTENT_PATH
+
+
+    WP_PLUGINS_INSTALL_CONCURRENCY="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
+    export PLUGIN_LIST WP_PLUGINS_PATH WP_PLUGINS_INSTALL_CONCURRENCY
+    taskInstallPlugins "${@}" &
+
+    sleep 1
+    echo "> Waiting for all tasks to complete"
+    wait
     return 0
 }
 
