@@ -77,7 +77,7 @@ function main() {
 
     CONCURRENCY_LIMIT="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
 
-    echo "> Automated WordPress Plugin Installer"
+    echo "> Automated WordPress Resources Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
         echo "> No plugins defined. Skipping installation."
         return 0
