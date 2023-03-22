@@ -71,6 +71,24 @@ check() {
     return 1
 }
 
+# Delete plugin
+# $1 - plugin slug
+# Returns 0 on success, X on failure
+delete() {
+    TARGET_PLUGINS_DIR="${TARGET_PLUGINS_DIR:?delete: TARGET_PLUGINS_DIR is required}"
+    PLUGIN_SLUG="${1:?delete: PLUGIN_SLUG is required}"
+
+    PLUGIN_PATH="${TARGET_PLUGINS_DIR}/${PLUGIN_SLUG}"
+
+    # Check if plugin directory exists
+    if [ ! -d "${PLUGIN_PATH}" ]; then
+        return 1
+    fi
+
+    rm -rf "${PLUGIN_PATH}"
+    return $?
+}
+
 # Main function
 main() {
     COMMAND="${1:?COMMAND is required}"
@@ -90,6 +108,10 @@ main() {
         ;;
     check)
         check "${@:2}"
+        return $?
+        ;;
+    delete)
+        delete "${@:2}"
         return $?
         ;;
     *)
