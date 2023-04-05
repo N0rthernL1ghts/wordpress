@@ -22,8 +22,8 @@ target "5_9_0" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=5_9_0"]
-  cache-to = ["type=gha,mode=max,scope=5_9_0"]
+  cache-from = ["type=gha,scope=5_9_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=5_9_0_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "5_9_1" {
@@ -34,8 +34,8 @@ target "5_9_1" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=5_9_1"]
-  cache-to = ["type=gha,mode=max,scope=5_9_1"]
+  cache-from = ["type=gha,scope=5_9_1_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=5_9_1_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "5_9_2" {
@@ -46,8 +46,8 @@ target "5_9_2" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=5_9_2"]
-  cache-to = ["type=gha,mode=max,scope=5_9_2"]
+  cache-from = ["type=gha,scope=5_9_2_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=5_9_2_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "5_9_3" {
@@ -58,8 +58,8 @@ target "5_9_3" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=5_9_3"]
-  cache-to = ["type=gha,mode=max,scope=5_9_3"]
+  cache-from = ["type=gha,scope=5_9_3_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=5_9_3_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_0" {
@@ -70,8 +70,8 @@ target "6_0_0" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=6_0_0"]
-  cache-to = ["type=gha,mode=max,scope=6_0_0"]
+  cache-from = ["type=gha,scope=6_0_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=6_0_0_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_1" {
@@ -82,8 +82,8 @@ target "6_0_1" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=6_0_1"]
-  cache-to = ["type=gha,mode=max,scope=6_0_1"]
+  cache-from = ["type=gha,scope=6_0_1_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=6_0_1_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_2" {
@@ -94,8 +94,8 @@ target "6_0_2" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=6_0_2"]
-  cache-to = ["type=gha,mode=max,scope=6_0_2"]
+  cache-from = ["type=gha,scope=6_0_2_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=6_0_2_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_3" {
@@ -106,8 +106,8 @@ target "6_0_3" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=6_0_3"]
-  cache-to = ["type=gha,mode=max,scope=6_0_3"]
+  cache-from = ["type=gha,scope=6_0_3_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=6_0_3_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_1_0" {
@@ -118,8 +118,8 @@ target "6_1_0" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=6_1_0"]
-  cache-to = ["type=gha,mode=max,scope=6_1_0"]
+  cache-from = ["type=gha,scope=6_1_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=6_1_0_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_1_1" {
@@ -130,8 +130,8 @@ target "6_1_1" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=6_1_1"]
-  cache-to = ["type=gha,mode=max,scope=6_1_1"]
+  cache-from = ["type=gha,scope=6_1_1_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=6_1_1_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_2_0" {
@@ -142,6 +142,6 @@ target "6_2_0" {
   }
 
   # Cache
-  cache-from = ["type=gha,scope=6_2_0"]
-  cache-to = ["type=gha,mode=max,scope=6_2_0"]
+  cache-from = ["type=gha,scope=6_2_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to = ["type=gha,mode=max,scope=6_2_0_${BAKE_LOCAL_PLATFORM}"]
 }
