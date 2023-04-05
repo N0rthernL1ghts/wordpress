@@ -41,5 +41,3 @@ jobs:
         with:
           files: build/docker-bake.hcl
           push: true
-          set: |
-            *.cache-to=
