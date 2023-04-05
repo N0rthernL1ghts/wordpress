@@ -47,5 +47,6 @@ WORKDIR "/var/www/html/"
 VOLUME ["/root/.wp-cli", "/var/www/html/wp-content"]
 
 LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>"
+LABEL org.opencontainers.image.source = "https://github.com/N0rthernL1ghts/wordpress"
 ENTRYPOINT ["/init"]
 EXPOSE 80/TCP
