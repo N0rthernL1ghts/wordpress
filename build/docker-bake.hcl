@@ -20,6 +20,10 @@ target "5_9_0" {
   args = {
     WP_VERSION = "5.9.0"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=5_9_0"]
+  cache-to = ["type=gha,mode=max,scope=5_9_0"]
 }
 
 target "5_9_1" {
@@ -28,6 +32,10 @@ target "5_9_1" {
   args = {
     WP_VERSION = "5.9.1"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=5_9_1"]
+  cache-to = ["type=gha,mode=max,scope=5_9_1"]
 }
 
 target "5_9_2" {
@@ -36,6 +44,10 @@ target "5_9_2" {
   args = {
     WP_VERSION = "5.9.2"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=5_9_2"]
+  cache-to = ["type=gha,mode=max,scope=5_9_2"]
 }
 
 target "5_9_3" {
@@ -44,6 +56,10 @@ target "5_9_3" {
   args = {
     WP_VERSION = "5.9.3"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=5_9_3"]
+  cache-to = ["type=gha,mode=max,scope=5_9_3"]
 }
 
 target "6_0_0" {
@@ -52,6 +68,10 @@ target "6_0_0" {
   args = {
     WP_VERSION = "6.0.0"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=6_0_0"]
+  cache-to = ["type=gha,mode=max,scope=6_0_0"]
 }
 
 target "6_0_1" {
@@ -60,6 +80,10 @@ target "6_0_1" {
   args = {
     WP_VERSION = "6.0.1"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=6_0_1"]
+  cache-to = ["type=gha,mode=max,scope=6_0_1"]
 }
 
 target "6_0_2" {
@@ -68,6 +92,10 @@ target "6_0_2" {
   args = {
     WP_VERSION = "6.0.2"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=6_0_2"]
+  cache-to = ["type=gha,mode=max,scope=6_0_2"]
 }
 
 target "6_0_3" {
@@ -76,6 +104,10 @@ target "6_0_3" {
   args = {
     WP_VERSION = "6.0.3"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=6_0_3"]
+  cache-to = ["type=gha,mode=max,scope=6_0_3"]
 }
 
 target "6_1_0" {
@@ -84,6 +116,10 @@ target "6_1_0" {
   args = {
     WP_VERSION = "6.1.0"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=6_1_0"]
+  cache-to = ["type=gha,mode=max,scope=6_1_0"]
 }
 
 target "6_1_1" {
@@ -92,6 +128,10 @@ target "6_1_1" {
   args = {
     WP_VERSION = "6.1.1"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=6_1_1"]
+  cache-to = ["type=gha,mode=max,scope=6_1_1"]
 }
 
 target "6_2_0" {
@@ -100,4 +140,8 @@ target "6_2_0" {
   args = {
     WP_VERSION = "6.2.0"
   }
+
+  # Cache
+  cache-from = ["type=gha,scope=6_2_0"]
+  cache-to = ["type=gha,mode=max,scope=6_2_0"]
 }
