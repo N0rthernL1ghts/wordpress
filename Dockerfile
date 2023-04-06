@@ -46,7 +46,13 @@ ENV CRON_ENABLED=true
 WORKDIR "/var/www/html/"
 VOLUME ["/root/.wp-cli", "/var/www/html/wp-content"]
 
-LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>"
-LABEL org.opencontainers.image.source = "https://github.com/N0rthernL1ghts/wordpress"
+LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>" \
+      org.opencontainers.image.documentation="https://github.com/N0rthernL1ghts/wordpress/wiki" \
+      org.opencontainers.image.source="https://github.com/N0rthernL1ghts/wordpress" \
+      org.opencontainers.image.description="nginx-unit Powered WordPress ${WP_VERSION} - Build ${TARGETPLATFORM}" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.version="${WP_VERSION}"
+
+
 ENTRYPOINT ["/init"]
 EXPOSE 80/TCP
