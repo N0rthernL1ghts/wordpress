@@ -1,5 +1,5 @@
 # wordpress
-WorPress docker image, powered by nginx/php-fpm combo and managed by s6 supervisor.
+WordPress docker image, powered by s6 supervised nginx unit.
 
 Attempt to fix several of WordPress anti-patterns in ready to deploy container
 
@@ -68,7 +68,7 @@ You can extend this image and install plugins during build time, using `wp-plugi
 
 Example:
 ```Dockerfile
-FROM nlss/wordpress:6.1.1 AS wp-plugins-installer
+FROM nlss/wordpress:6.2.0 AS wp-plugins-installer
 
 RUN set -eux \
     && export WP_PLUGINS_PATH="/var/www/html/wp-content/plugins" \
@@ -77,7 +77,7 @@ RUN set -eux \
     && wp-plugin download wp-mail-smtp
 
 # Final image
-FROM nlss/wordpress:6.1.1
+FROM nlss/wordpress:6.2.0
 
 # Example: 
 # - Install ext-redis with pecl
