@@ -23,7 +23,7 @@ target "5_9_0" {
 
   # Cache
   cache-from = ["type=gha,scope=5_9_0_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=5_9_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=5_9_0_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "5_9_1" {
@@ -35,7 +35,7 @@ target "5_9_1" {
 
   # Cache
   cache-from = ["type=gha,scope=5_9_1_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=5_9_1_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=5_9_1_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "5_9_2" {
@@ -47,19 +47,23 @@ target "5_9_2" {
 
   # Cache
   cache-from = ["type=gha,scope=5_9_2_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=5_9_2_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=5_9_2_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "5_9_3" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:5", "docker.io/nlss/wordpress:5.9", "docker.io/nlss/wordpress:5.9.3", "ghcr.io/n0rthernl1ghts/wordpress:5", "ghcr.io/n0rthernl1ghts/wordpress:5.9", "ghcr.io/n0rthernl1ghts/wordpress:5.9.3"]
+  tags = [
+    "docker.io/nlss/wordpress:5", "docker.io/nlss/wordpress:5.9", "docker.io/nlss/wordpress:5.9.3",
+    "ghcr.io/n0rthernl1ghts/wordpress:5", "ghcr.io/n0rthernl1ghts/wordpress:5.9",
+    "ghcr.io/n0rthernl1ghts/wordpress:5.9.3"
+  ]
   args = {
     WP_VERSION = "5.9.3"
   }
 
   # Cache
   cache-from = ["type=gha,scope=5_9_3_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=5_9_3_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=5_9_3_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_0" {
@@ -71,7 +75,7 @@ target "6_0_0" {
 
   # Cache
   cache-from = ["type=gha,scope=6_0_0_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=6_0_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=6_0_0_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_1" {
@@ -83,7 +87,7 @@ target "6_0_1" {
 
   # Cache
   cache-from = ["type=gha,scope=6_0_1_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=6_0_1_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=6_0_1_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_2" {
@@ -95,7 +99,7 @@ target "6_0_2" {
 
   # Cache
   cache-from = ["type=gha,scope=6_0_2_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=6_0_2_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=6_0_2_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_0_3" {
@@ -107,7 +111,7 @@ target "6_0_3" {
 
   # Cache
   cache-from = ["type=gha,scope=6_0_3_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=6_0_3_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=6_0_3_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_1_0" {
@@ -119,29 +123,36 @@ target "6_1_0" {
 
   # Cache
   cache-from = ["type=gha,scope=6_1_0_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=6_1_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=6_1_0_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_1_1" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:6.1", "docker.io/nlss/wordpress:6.1.1", "ghcr.io/n0rthernl1ghts/wordpress:6.1", "ghcr.io/n0rthernl1ghts/wordpress:6.1.1"]
+  tags = [
+    "docker.io/nlss/wordpress:6.1", "docker.io/nlss/wordpress:6.1.1", "ghcr.io/n0rthernl1ghts/wordpress:6.1",
+    "ghcr.io/n0rthernl1ghts/wordpress:6.1.1"
+  ]
   args = {
     WP_VERSION = "6.1.1"
   }
 
   # Cache
   cache-from = ["type=gha,scope=6_1_1_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=6_1_1_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=6_1_1_${BAKE_LOCAL_PLATFORM}"]
 }
 
 target "6_2_0" {
   inherits = ["build-dockerfile", "build-platforms", "build-common"]
-  tags     = ["docker.io/nlss/wordpress:6", "docker.io/nlss/wordpress:6.2", "docker.io/nlss/wordpress:6.2.0", "docker.io/nlss/wordpress:latest", "ghcr.io/n0rthernl1ghts/wordpress:6", "ghcr.io/n0rthernl1ghts/wordpress:6.2", "ghcr.io/n0rthernl1ghts/wordpress:6.2.0", "ghcr.io/n0rthernl1ghts/wordpress:latest"]
+  tags = [
+    "docker.io/nlss/wordpress:6", "docker.io/nlss/wordpress:6.2", "docker.io/nlss/wordpress:6.2.0",
+    "docker.io/nlss/wordpress:latest", "ghcr.io/n0rthernl1ghts/wordpress:6", "ghcr.io/n0rthernl1ghts/wordpress:6.2",
+    "ghcr.io/n0rthernl1ghts/wordpress:6.2.0", "ghcr.io/n0rthernl1ghts/wordpress:latest"
+  ]
   args = {
     WP_VERSION = "6.2.0"
   }
 
   # Cache
   cache-from = ["type=gha,scope=6_2_0_${BAKE_LOCAL_PLATFORM}"]
-  cache-to = ["type=gha,mode=max,scope=6_2_0_${BAKE_LOCAL_PLATFORM}"]
+  cache-to   = ["type=gha,mode=max,scope=6_2_0_${BAKE_LOCAL_PLATFORM}"]
 }
