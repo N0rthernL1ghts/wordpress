@@ -135,7 +135,7 @@ target "6_1_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cache-from("6.1.1")
   cache-to   = get-cache-to("6.1.1")
-  tags       = get-tags("6.1.1", ["6", "6.1"])
+  tags       = get-tags("6.1.1", ["6.1"])
   args       = get-args("6.1.1")
 }
 
