@@ -119,8 +119,16 @@ target "6_1_0" {
 
 target "6_1_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = ["type=gha,scope=6_1_1_${BAKE_LOCAL_PLATFORM}"]
-  cache-to   = ["type=gha,mode=max,scope=6_1_1_${BAKE_LOCAL_PLATFORM}"]
+
+  cache-from = [
+    "type=gha,scope=6_1_1_${BAKE_LOCAL_PLATFORM}",
+    "type=registry,ref=docker.io/nlss/wordpress-cache:${md5("6.1.1-${BAKE_LOCAL_PLATFORM}")}"
+  ]
+
+  cache-to = [
+    "type=gha,mode=max,scope=6_1_1_${BAKE_LOCAL_PLATFORM}",
+    "type=registry,mode=max,ref=docker.io/nlss/wordpress-cache:${md5("6.1.1-${BAKE_LOCAL_PLATFORM}")}"
+  ]
 
   tags = [
     "docker.io/nlss/wordpress:6.1", "docker.io/nlss/wordpress:6.1.1", "ghcr.io/n0rthernl1ghts/wordpress:6.1",
