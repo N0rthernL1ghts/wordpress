@@ -2,6 +2,10 @@ group "default" {
   targets = ["5_9_0", "5_9_1", "5_9_2", "5_9_3", "6_0_0", "6_0_1", "6_0_2", "6_0_3", "6_1_0", "6_1_1", "6_2_0"]
 }
 
+variable "REGISTRY_CACHE" {
+  default = "docker.io/nlss/wordpress-cache"
+}
+
 # Get the arguments for the build
 function "get-args" {
   params = [version]
@@ -15,7 +19,7 @@ function "get-cache-from" {
   params = [version]
   result = [
     "type=gha,scope=${version}_${BAKE_LOCAL_PLATFORM}",
-    "type=registry,ref=docker.io/nlss/wordpress-cache:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}"
+    "type=registry,ref=${REGISTRY_CACHE}:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}"
   ]
 }
 
