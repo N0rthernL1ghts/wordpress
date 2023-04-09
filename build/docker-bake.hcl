@@ -1,10 +1,38 @@
 group "default" {
-  targets = ["5_9_0", "5_9_1", "5_9_2", "5_9_3", "6_0_0", "6_0_1", "6_0_2", "6_0_3", "6_1_0", "6_1_1", "6_2_0"]
+  targets = [
+    "5_9_0",
+    "5_9_1",
+    "5_9_2",
+    "5_9_3",
+    "6_0_0",
+    "6_0_1",
+    "6_0_2",
+    "6_0_3",
+    "6_1_0",
+    "6_1_1",
+    "6_2_0"
+  ]
+}
+
+target "build-dockerfile" {
+  dockerfile = "Dockerfile"
+}
+
+target "build-platforms" {
+  platforms = ["linux/amd64", "linux/armhf", "linux/aarch64"]
+}
+
+target "build-common" {
+  pull = true
 }
 
 variable "REGISTRY_CACHE" {
   default = "docker.io/nlss/wordpress-cache"
 }
+
+######################
+# Define the functions
+######################
 
 # Get the arguments for the build
 function "get-args" {
@@ -51,17 +79,9 @@ function "get-tags" {
   )
 }
 
-target "build-dockerfile" {
-  dockerfile = "Dockerfile"
-}
-
-target "build-platforms" {
-  platforms = ["linux/amd64", "linux/armhf", "linux/aarch64"]
-}
-
-target "build-common" {
-  pull = true
-}
+##########################
+# Define the build targets
+##########################
 
 target "5_9_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
