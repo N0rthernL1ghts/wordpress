@@ -22,17 +22,21 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
 - 2023-01-23 WordPress is no longer installed during runtime and it's bundled into the image
   * This renders WP_LOCALE environment variable useless
   * Instead, you will be offered to select locale during the first setup
+- 2023-04-09 Deprecation of docker.io hosted images. We're moving to ghcr.io.
+  * This is due to Docker Hub's sunsetting of free teams. See docker/hub-feedback#2314
+  * If you are using nlss/wordpress images, you should switch to ghcr.io/n0rthernl1ghts/wordpress
+  * nlss/wordpress images will be removed in May. Further usage is not recommended, although we'll keep them up to date until then.
 
 #### Public builds (docker)
 
 You can use public build:
 ```
-nlss/wordpress
+ghcr.io/n0rthernl1ghts/wordpress:latest
 ```
 
 You can also use specific version of WordPress:
 ```
-nlss/wordpress:6.1.0
+ghcr.io/n0rthernl1ghts/wordpress:6.2.0
 ```
 
 Replace version number with desired version, eg. 6.0.2.
@@ -68,7 +72,7 @@ You can extend this image and install plugins during build time, using `wp-plugi
 
 Example:
 ```Dockerfile
-FROM nlss/wordpress:6.2.0 AS wp-plugins-installer
+FROM ghcr.io/n0rthernl1ghts/wordpress:6.2.0 AS wp-plugins-installer
 
 RUN set -eux \
     && export WP_PLUGINS_PATH="/var/www/html/wp-content/plugins" \
@@ -77,7 +81,7 @@ RUN set -eux \
     && wp-plugin download wp-mail-smtp
 
 # Final image
-FROM nlss/wordpress:6.2.0
+FROM ghcr.io/n0rthernl1ghts/wordpress:6.2.0
 
 # Example: 
 # - Install ext-redis with pecl
