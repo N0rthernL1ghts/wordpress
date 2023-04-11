@@ -29,6 +29,8 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
 
 #### Public builds (docker)
 
+See: [packages](pkgs/container/wordpress)
+
 You can use public build:
 ```
 ghcr.io/n0rthernl1ghts/wordpress:latest
