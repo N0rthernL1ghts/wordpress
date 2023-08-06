@@ -41,7 +41,7 @@ function "get-args" {
   params = [version, patch_version]
   result = {
     WP_VERSION = version
-    WP_PATCH_VERSION = patch_version)
+    WP_PATCH_VERSION = patch_version
   }
 }
 
