@@ -26,6 +26,11 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * This is due to Docker Hub's sunsetting of free teams. See docker/hub-feedback#2314
   * If you are using nlss/wordpress images, you should switch to ghcr.io/n0rthernl1ghts/wordpress
   * nlss/wordpress images will be removed in May. Further usage is not recommended, although we'll keep them up to date until then.
+- 2023-08-06 Deprecation/removal of linux/armhf architecture
+  * 32-bit ARM is [officialy dead](https://www.androidauthority.com/arm-32-vs-64-bit-explained-1232065/).
+  * It has been deprecated/removed in the base
+  * This improves build speed as buidling linux/armhf is slow and was taking the most of the time
+  * Simplifies maintenance
 
 #### Public builds (docker)
 
