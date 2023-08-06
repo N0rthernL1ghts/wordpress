@@ -38,9 +38,10 @@ variable "REGISTRY_CACHE" {
 
 # Get the arguments for the build
 function "get-args" {
-  params = [version]
+  params = [version, patch_version]
   result = {
     WP_VERSION = version
+    WP_PATCH_VERSION = patch_version)
   }
 }
 
@@ -88,7 +89,7 @@ target "5_9_0" {
   cache-from = get-cache-from("5.9.0")
   cache-to   = get-cache-to("5.9.0")
   tags       = get-tags("5.9.0", [])
-  args       = get-args("5.9.0")
+  args       = get-args("5.9.0", "5.9.0")
 }
 
 target "5_9_1" {
@@ -96,7 +97,7 @@ target "5_9_1" {
   cache-from = get-cache-from("5.9.1")
   cache-to   = get-cache-to("5.9.1")
   tags       = get-tags("5.9.1", [])
-  args       = get-args("5.9.1")
+  args       = get-args("5.9.1", "5.9.1")
 }
 
 target "5_9_2" {
@@ -104,7 +105,7 @@ target "5_9_2" {
   cache-from = get-cache-from("5.9.2")
   cache-to   = get-cache-to("5.9.2")
   tags       = get-tags("5.9.2", [])
-  args       = get-args("5.9.2")
+  args       = get-args("5.9.2", "5.9.1")
 }
 
 target "5_9_3" {
@@ -112,7 +113,7 @@ target "5_9_3" {
   cache-from = get-cache-from("5.9.3")
   cache-to   = get-cache-to("5.9.3")
   tags       = get-tags("5.9.3", ["5", "5.9"])
-  args       = get-args("5.9.3")
+  args       = get-args("5.9.3", "5.9.1")
 }
 
 target "6_0_0" {
@@ -120,7 +121,7 @@ target "6_0_0" {
   cache-from = get-cache-from("6.0.0")
   cache-to   = get-cache-to("6.0.0")
   tags       = get-tags("6.0.0", [])
-  args       = get-args("6.0.0")
+  args       = get-args("6.0.0", "5.9.1")
 }
 
 target "6_0_1" {
@@ -128,7 +129,7 @@ target "6_0_1" {
   cache-from = get-cache-from("6.0.1")
   cache-to   = get-cache-to("6.0.1")
   tags       = get-tags("6.0.1", [])
-  args       = get-args("6.0.1")
+  args       = get-args("6.0.1", "5.9.1")
 }
 
 target "6_0_2" {
@@ -136,7 +137,7 @@ target "6_0_2" {
   cache-from = get-cache-from("6.0.2")
   cache-to   = get-cache-to("6.0.2")
   tags       = get-tags("6.0.2", [])
-  args       = get-args("6.0.2")
+  args       = get-args("6.0.2", "5.9.1")
 }
 
 target "6_0_3" {
@@ -144,7 +145,7 @@ target "6_0_3" {
   cache-from = get-cache-from("6.0.3")
   cache-to   = get-cache-to("6.0.3")
   tags       = get-tags("6.0.3", ["6.0"])
-  args       = get-args("6.0.3")
+  args       = get-args("6.0.3", "5.9.1")
 }
 
 target "6_1_0" {
@@ -152,7 +153,7 @@ target "6_1_0" {
   cache-from = get-cache-from("6.1.0")
   cache-to   = get-cache-to("6.1.0")
   tags       = get-tags("6.1.0", [])
-  args       = get-args("6.1.0")
+  args       = get-args("6.1.0", "5.9.1")
 }
 
 target "6_1_1" {
@@ -160,7 +161,7 @@ target "6_1_1" {
   cache-from = get-cache-from("6.1.1")
   cache-to   = get-cache-to("6.1.1")
   tags       = get-tags("6.1.1", ["6.1"])
-  args       = get-args("6.1.1")
+  args       = get-args("6.1.1", "5.9.1")
 }
 
 target "6_2_0" {
@@ -168,7 +169,7 @@ target "6_2_0" {
   cache-from = get-cache-from("6.2.0")
   cache-to   = get-cache-to("6.2.0")
   tags       = get-tags("6.2.0", [])
-  args       = get-args("6.2.0")
+  args       = get-args("6.2.0", "5.9.1")
 }
 
 target "6_2_1" {
@@ -176,7 +177,7 @@ target "6_2_1" {
   cache-from = get-cache-from("6.2.1")
   cache-to   = get-cache-to("6.2.1")
   tags       = get-tags("6.2.1", [])
-  args       = get-args("6.2.1")
+  args       = get-args("6.2.1", "5.9.1")
 }
 
 target "6_2_2" {
@@ -184,5 +185,5 @@ target "6_2_2" {
   cache-from = get-cache-from("6.2.2")
   cache-to   = get-cache-to("6.2.2")
   tags       = get-tags("6.2.2", ["6", "6.2", "latest"])
-  args       = get-args("6.2.2")
+  args       = get-args("6.2.2", "5.9.1")
 }

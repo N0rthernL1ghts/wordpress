@@ -1,5 +1,6 @@
 ARG PHP_VERSION=8.1
 ARG WP_VERSION=6.1.0
+ARG WP_PATCH_VERSION=5.9.1
 
 # WordPress resources
 FROM --platform=${TARGETPLATFORM} wordpress:cli-php${PHP_VERSION} AS wp-cli
@@ -18,11 +19,12 @@ COPY ["./rootfs/", "/"]
 
 # Configuration and patches
 ARG WP_VERSION
+ARG WP_PATCH_VERSION
 
 # Copy WordPress source from the official image
 COPY --from=wp-src ["/usr/src/wordpress/", "/var/www/html/"]
 
-COPY ["patches/${WP_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
+COPY ["patches/${WP_PATCH_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
 
 
 # Stage 3 - Final
@@ -38,7 +40,9 @@ RUN set -eux \
     && wp-apply-patch "/etc/wp-mods/wp-admin-update-core.patch" "/var/www/html/wp-admin/update-core.php" "true"
 
 ARG WP_VERSION
+ARG WP_PATCH_VERSION
 ENV WP_VERSION="${WP_VERSION}"
+ENV WP_PATCH_VERSION="${WP_PATCH_VERSION}"
 ENV ENFORCE_DISABLE_WP_UPDATES=true
 ENV WP_CLI_DISABLE_AUTO_CHECK_UPDATE=true
 ENV CRON_ENABLED=true
