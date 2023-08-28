@@ -28,7 +28,7 @@ COPY ["patches/${WP_PATCH_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
 
 
 # Stage 3 - Final
-FROM --platform=${TARGETPLATFORM} nlss/wordpress-unit-base:1.0.0
+FROM --platform=${TARGETPLATFORM} ghcr.io/n0rthernl1ghts/wordpress-unit-base:1.0.0
 
 RUN apk add --update --no-cache patch
 
@@ -53,7 +53,7 @@ VOLUME ["/root/.wp-cli", "/var/www/html/wp-content"]
 LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>" \
       org.opencontainers.image.documentation="https://github.com/N0rthernL1ghts/wordpress/wiki" \
       org.opencontainers.image.source="https://github.com/N0rthernL1ghts/wordpress" \
-      org.opencontainers.image.description="nginx-unit Powered WordPress ${WP_VERSION} - Build ${TARGETPLATFORM}" \
+      org.opencontainers.image.description="NGINX Unit Powered WordPress ${WP_VERSION} - Build ${TARGETPLATFORM}" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.version="${WP_VERSION}"
 
