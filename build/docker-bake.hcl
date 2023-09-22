@@ -13,7 +13,8 @@ group "default" {
     "6_2_0",
     "6_2_1",
     "6_2_2",
-    "6_3_0"
+    "6_3_0",
+    "6_3_1"
   ]
 }
 
@@ -193,6 +194,14 @@ target "6_3_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cache-from("6.3.0")
   cache-to   = get-cache-to("6.3.0")
-  tags       = get-tags("6.3.0", ["6", "6.3", "latest"])
+  tags       = get-tags("6.3.0", [])
   args       = get-args("6.3.0", "6.3.0")
+}
+
+target "6_3_1" {
+  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
+  cache-from = get-cache-from("6.3.1")
+  cache-to   = get-cache-to("6.3.1")
+  tags       = get-tags("6.3.1", ["6", "6.3", "latest"])
+  args       = get-args("6.3.1", "6.3.0")
 }
