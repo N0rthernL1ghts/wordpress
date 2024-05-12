@@ -17,7 +17,10 @@ group "default" {
     "6_3_1",
     "6_3_2",
     "6_3_3",
-    "6_4_0"
+    "6_4_0",
+    "6_4_1",
+    "6_4_2",
+    "6_4_3"
   ]
 }
 
@@ -229,6 +232,30 @@ target "6_4_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cache-from("6.4.0")
   cache-to   = get-cache-to("6.4.0")
-  tags       = get-tags("6.4.0", ["6", "6.4", "latest"])
+  tags       = get-tags("6.4.0", [])
   args       = get-args("6.4.0", "6.4.0")
+}
+
+target "6_4_1" {
+  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
+  cache-from = get-cache-from("6.4.1")
+  cache-to   = get-cache-to("6.4.1")
+  tags       = get-tags("6.4.1", [])
+  args       = get-args("6.4.1", "6.4.0")
+}
+
+target "6_4_2" {
+  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
+  cache-from = get-cache-from("6.4.2")
+  cache-to   = get-cache-to("6.4.2")
+  tags       = get-tags("6.4.2", [])
+  args       = get-args("6.4.2", "6.4.0")
+}
+
+target "6_4_3" {
+  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
+  cache-from = get-cache-from("6.4.3")
+  cache-to   = get-cache-to("6.4.3")
+  tags       = get-tags("6.4.3", ["6", "6.4", "latest"])
+  args       = get-args("6.4.3", "6.4.0")
 }
