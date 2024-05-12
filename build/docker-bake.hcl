@@ -230,5 +230,5 @@ target "6_4_0" {
   cache-from = get-cache-from("6.4.0")
   cache-to   = get-cache-to("6.4.0")
   tags       = get-tags("6.4.0", ["6", "6.4", "latest"])
-  args       = get-args("6.4.0", "6.3.0")
+  args       = get-args("6.4.0", "6.4.0")
 }
