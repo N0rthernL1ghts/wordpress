@@ -31,6 +31,9 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * It has been deprecated/removed in the base
   * This improves build speed as buidling linux/armhf is slow and was taking the most of the time
   * Simplifies maintenance
+- 2024-05-13 Deprecation of WordPress versions prior to 6.2
+  * Old images will remain, but will receive no further updates, until their eventual removal. Usage is not recommended.
+  * This decision will make build stack significantly lighter, ensuring much faster future builds
 
 #### Public builds (docker)
 
