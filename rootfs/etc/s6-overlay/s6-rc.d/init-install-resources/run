@@ -103,7 +103,7 @@ function taskInstallPlugins() {
 
 # init-install-resources main
 main() {
-    exec > >(while read line; do echo "[init-install-resources] ${line}"; done) 2>&1
+    exec > >(while read -r line; do echo "[init-install-resources] ${line}"; done) 2>&1
 
     PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
     WP_CONTENT_PATH="/var/www/html/wp-content"
