@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
 # Designed to replace original, overcomplicated entrypoint script from official wordpress docker repository
 # Why not use already available tools instead?!
 
