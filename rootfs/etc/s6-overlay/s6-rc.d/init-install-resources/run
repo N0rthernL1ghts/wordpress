@@ -20,19 +20,19 @@ checkInstalled() {
         PLUGIN_SLUG="${PLUGIN[0]}"
 
         if wp-plugin check "${PLUGIN_SLUG}"; then
-            echo "> Plugin '${PLUGIN_SLUG}' installed"
+            echo "Plugin '${PLUGIN_SLUG}' installed"
             continue
         fi
 
         ((FAILED_COUNT = FAILED_COUNT + 1))
-        echo "> Warning: Plugin '${PLUGIN_SLUG}' failed to install"
+        echo "Warning: Plugin '${PLUGIN_SLUG}' failed to install"
     done
 
     if [ "${FAILED_COUNT}" = "0" ]; then
         return 0
     fi
 
-    echo "> Total of ${FAILED_COUNT} plugins failed to install"
+    echo "Total of ${FAILED_COUNT} plugins failed to install"
     return 1
 }
 
@@ -42,13 +42,13 @@ function taskInstallPlugins() {
 
     CONCURRENCY_LIMIT="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
 
-    echo "> Automated WordPress Plugins Installer"
+    echo "Automated WordPress Plugins Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
-        echo "> No plugins defined. Skipping installation."
+        echo "No plugins defined. Skipping installation."
         return 0
     fi
 
-    echo "> About to install defined plugins"
+    echo "About to install defined plugins"
     for PLUGIN_EXPR in ${PLUGIN_LIST}; do
 
         # Split plugin name and version
@@ -58,15 +58,15 @@ function taskInstallPlugins() {
         PLUGIN_VERSION="${PLUGIN[1]:-}"
 
         if wp-plugin check "${PLUGIN_SLUG}"; then
-            echo "> Plugin '${PLUGIN_SLUG}' already installed and will be skipped."
+            echo "Plugin '${PLUGIN_SLUG}' already installed and will be skipped."
             continue
         fi
 
         if [ -n "${PLUGIN_VERSION}" ]; then
-            echo "> Installing plugin '${PLUGIN_SLUG}' version '${PLUGIN_VERSION}'"
+            echo "Installing plugin '${PLUGIN_SLUG}' version '${PLUGIN_VERSION}'"
             installPlugin "${PLUGIN_SLUG}" "${PLUGIN_VERSION}" &
         else
-            echo "> Installing plugin '${PLUGIN_SLUG}'"
+            echo "Installing plugin '${PLUGIN_SLUG}'"
             installPlugin "${PLUGIN_SLUG}" &
         fi
 
@@ -77,28 +77,30 @@ function taskInstallPlugins() {
         done
     done
 
-    echo "> Waiting for all tasks to finish..."
+    echo "Waiting for all tasks to finish..."
     wait
 
     # Plugins are installed concurrently, so we need to verify if installed, separately
-    echo "> About to verify install of defined plugins"
+    echo "About to verify install of defined plugins"
 
     if ! checkInstalled; then
-        echo "> Some plugins failed to install"
+        echo "Some plugins failed to install"
         return 0
     fi
 
-    echo "> All plugins installed successfully"
+    echo "All plugins installed successfully"
     return 0
 }
 
-# Main function
+# init-install-resources main
 main() {
+    exec > >(while read line; do echo "[init-install-resources] ${line}"; done) 2>&1
+
     PLUGIN_LIST="${WORDPRESS_PLUGIN_LIST:-}"
     WP_CONTENT_PATH="/var/www/html/wp-content"
     WP_PLUGINS_PATH="${WP_CONTENT_PATH}/plugins"
 
-    echo "> Automated WordPress Resources Installer"
+    echo "Automated WordPress Resources Installer"
 
     export WP_CONTENT_PATH
 
@@ -108,10 +110,9 @@ main() {
     taskInstallPlugins "${@}" &
 
     sleep 1
-    echo "> Waiting for all tasks to complete"
+    echo "Waiting for all tasks to complete"
     wait
     return 0
 }
 
 main "${@}"
-exit $?
