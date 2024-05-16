@@ -1,9 +1,11 @@
 #!/command/with-contenv bash
+# shellcheck shell=bash
 
 # Install plugin
 installPlugin() {
-    ARCHIVE="$(wp-plugin download "${@}" 2>/dev/null)"
-    if [ -z "${ARCHIVE}" ]; then
+    local pluginArchive
+    pluginArchive="$(wp-plugin download "${@}" 2>/dev/null)"
+    if [ -z "${pluginArchive}" ]; then
         return 1
     fi
 
@@ -12,27 +14,30 @@ installPlugin() {
 }
 
 checkInstalled() {
-    FAILED_COUNT=0
+    local failedCount=0
+    local pluginSlug
+    local pluginExpr
+    local plugin
 
-    for PLUGIN_EXPR in ${PLUGIN_LIST}; do
-        IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
+    for pluginExpr in ${PLUGIN_LIST}; do
+        IFS=':' read -ra plugin <<<"${pluginExpr}"
 
-        PLUGIN_SLUG="${PLUGIN[0]}"
+        pluginSlug="${plugin[0]}"
 
-        if wp-plugin check "${PLUGIN_SLUG}"; then
-            echo "Plugin '${PLUGIN_SLUG}' installed"
+        if wp-plugin check "${pluginSlug}"; then
+            echo "Plugin '${pluginSlug}' installed"
             continue
         fi
 
-        ((FAILED_COUNT = FAILED_COUNT + 1))
-        echo "Warning: Plugin '${PLUGIN_SLUG}' failed to install"
+        ((failedCount = failedCount + 1))
+        echo "Warning: Plugin '${pluginSlug}' failed to install"
     done
 
-    if [ "${FAILED_COUNT}" = "0" ]; then
+    if [ "${failedCount}" = "0" ]; then
         return 0
     fi
 
-    echo "Total of ${FAILED_COUNT} plugins failed to install"
+    echo "Total of ${failedCount} plugins failed to install"
     return 1
 }
 
@@ -40,7 +45,11 @@ checkInstalled() {
 function taskInstallPlugins() {
     export WP_PLUGINS_PATH
 
-    CONCURRENCY_LIMIT="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
+    local concurrencyLimit="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
+    local pluginSlug
+    local pluginVersion
+    local pluginExpr
+    local plugin
 
     echo "Automated WordPress Plugins Installer"
     if [ -z "${PLUGIN_LIST}" ]; then
@@ -49,30 +58,30 @@ function taskInstallPlugins() {
     fi
 
     echo "About to install defined plugins"
-    for PLUGIN_EXPR in ${PLUGIN_LIST}; do
+    for pluginExpr in ${PLUGIN_LIST}; do
 
         # Split plugin name and version
-        IFS=':' read -ra PLUGIN <<<"${PLUGIN_EXPR}"
+        IFS=':' read -ra plugin <<<"${pluginExpr}"
 
-        PLUGIN_SLUG="${PLUGIN[0]}"
-        PLUGIN_VERSION="${PLUGIN[1]:-}"
+        pluginSlug="${plugin[0]}"
+        pluginVersion="${plugin[1]:-}"
 
-        if wp-plugin check "${PLUGIN_SLUG}"; then
-            echo "Plugin '${PLUGIN_SLUG}' already installed and will be skipped."
+        if wp-plugin check "${pluginSlug}"; then
+            echo "Plugin '${pluginSlug}' already installed and will be skipped."
             continue
         fi
 
-        if [ -n "${PLUGIN_VERSION}" ]; then
-            echo "Installing plugin '${PLUGIN_SLUG}' version '${PLUGIN_VERSION}'"
-            installPlugin "${PLUGIN_SLUG}" "${PLUGIN_VERSION}" &
+        if [ -n "${pluginVersion}" ]; then
+            echo "Installing plugin '${pluginSlug}' version '${pluginVersion}'"
+            installPlugin "${pluginSlug}" "${pluginVersion}" &
         else
-            echo "Installing plugin '${PLUGIN_SLUG}'"
-            installPlugin "${PLUGIN_SLUG}" &
+            echo "Installing plugin '${pluginSlug}'"
+            installPlugin "${pluginSlug}" &
         fi
 
         # Run maximum of X plugin installs in parallel
-        while [ "$(jobs | wc -l)" -ge "${CONCURRENCY_LIMIT}" ]; do
-            echo "  Waiting for batch of ${CONCURRENCY_LIMIT} plugins to install..."
+        while [ "$(jobs | wc -l)" -ge "${concurrencyLimit}" ]; do
+            echo "  Waiting for batch of ${concurrencyLimit} plugins to install..."
             wait
         done
     done
@@ -103,7 +112,6 @@ main() {
     echo "Automated WordPress Resources Installer"
 
     export WP_CONTENT_PATH
-
 
     WP_PLUGINS_INSTALL_CONCURRENCY="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
     export PLUGIN_LIST WP_PLUGINS_PATH WP_PLUGINS_INSTALL_CONCURRENCY
