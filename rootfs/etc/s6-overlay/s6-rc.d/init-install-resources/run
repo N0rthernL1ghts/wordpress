@@ -42,7 +42,7 @@ checkInstalled() {
 }
 
 # Plugins installer
-function taskInstallPlugins() {
+taskInstallPlugins() {
     export WP_PLUGINS_PATH
 
     local concurrencyLimit="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
@@ -56,6 +56,8 @@ function taskInstallPlugins() {
         echo "No plugins defined. Skipping installation."
         return 0
     fi
+
+    local jobs=()
 
     echo "About to install defined plugins"
     for pluginExpr in ${PLUGIN_LIST}; do
@@ -74,9 +76,11 @@ function taskInstallPlugins() {
         if [ -n "${pluginVersion}" ]; then
             echo "Installing plugin '${pluginSlug}' version '${pluginVersion}'"
             installPlugin "${pluginSlug}" "${pluginVersion}" &
+            jobs+=($!)
         else
             echo "Installing plugin '${pluginSlug}'"
             installPlugin "${pluginSlug}" &
+            jobs+=($!)
         fi
 
         # Run maximum of X plugin installs in parallel
@@ -87,7 +91,10 @@ function taskInstallPlugins() {
     done
 
     echo "Waiting for all tasks to finish..."
-    wait
+
+    for pid in ${jobs[@]}; do
+        wait $pid
+    done
 
     # Plugins are installed concurrently, so we need to verify if installed, separately
     echo "About to verify install of defined plugins"
@@ -111,15 +118,22 @@ main() {
 
     echo "Automated WordPress Resources Installer"
 
+    local jobs=()
+
     export WP_CONTENT_PATH
 
     WP_PLUGINS_INSTALL_CONCURRENCY="${WP_PLUGINS_INSTALL_CONCURRENCY:-5}"
     export PLUGIN_LIST WP_PLUGINS_PATH WP_PLUGINS_INSTALL_CONCURRENCY
     taskInstallPlugins "${@}" &
+    jobs+=($!)
 
-    sleep 1
     echo "Waiting for all tasks to complete"
-    wait
+    
+    # Wait for all tasks but do not wait for the background task
+    for pid in ${jobs[@]}; do
+        wait $pid
+    done
+
     return 0
 }
 
