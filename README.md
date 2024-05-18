@@ -34,6 +34,12 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
 - 2024-05-13 Deprecation of WordPress versions prior to 6.2
   * Old images will remain, but will receive no further updates, until their eventual removal. Usage is not recommended.
   * This decision will make build stack significantly lighter, ensuring much faster future builds
+- 2024-05-17 Upgrade S6 supervisor to v3
+  * This is breaking change affecting all images
+  * If your setup was vanilla, it should work out of the box
+  * If you have custom scripts, you should review them and migrate to new format
+  * S6 supervisor v3 brings many improvements and bugfixes in addition to performance improvements
+  * This change is necessary to ensure compatibility with future base image updates
 
 #### Public builds (docker)
 
