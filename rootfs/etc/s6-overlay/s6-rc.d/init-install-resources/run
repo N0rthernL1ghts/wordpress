@@ -92,8 +92,8 @@ taskInstallPlugins() {
 
     echo "Waiting for all tasks to finish..."
 
-    for pid in ${jobs[@]}; do
-        wait $pid
+    for pid in "${jobs[@]}"; do
+        wait "$pid"
     done
 
     # Plugins are installed concurrently, so we need to verify if installed, separately
@@ -130,8 +130,8 @@ main() {
     echo "Waiting for all tasks to complete"
     
     # Wait for all tasks but do not wait for the background task
-    for pid in ${jobs[@]}; do
-        wait $pid
+    for pid in "${jobs[@]}"; do
+        wait "$pid"
     done
 
     return 0
