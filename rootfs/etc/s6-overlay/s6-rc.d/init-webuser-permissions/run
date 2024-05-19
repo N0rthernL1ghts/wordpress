@@ -1,0 +1,35 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+fix_permissions() {
+    /usr/local/bin/attr /var/www true www-data:www-data 0770 2771 &
+    /usr/local/bin/attr /var/www/html/wp-content true www-data:www-data 2755 2755 &
+}
+
+run_process() {
+    local counter=1
+    local wait_pid="${1}"
+
+    # Print status message every ~5 seconds
+    while kill -0 $wait_pid 2>/dev/null; do
+        if [ $((counter % 5)) -eq 0 ]; then
+            echo "Process hasn't finished yet [${counter}]"
+        fi
+
+        counter=$((counter + 1))
+        sleep 1
+    done
+}
+
+# init-webuser-permissions main
+main() {
+    # This will prepend service name to all output from here
+    exec > >(while read line; do echo "[init-webuser-permissions] ${line}"; done) 2>&1
+
+    fix_permissions &
+    pid=$!
+
+    echo "Running fix_permissions with PID ${pid} in foreground..."
+    run_process "${pid}" &
+}
+main
