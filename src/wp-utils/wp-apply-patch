@@ -3,29 +3,29 @@
 set -e
 
 # Applies patch for preventing WordPress updates
-function main() {
-    PATCH_FILE="${1:?PATCH_FILE is required}"
-    TARGET_FILE="${2:?TARGET_FILE is required}"
+main() {
+    local patchFile="${1:?PATCH_FILE is required}"
+    local targetFile="${2:?TARGET_FILE is required}"
 
-    if [ ! -f "${PATCH_FILE}" ]; then
-        echo ">	No such	file [PATCH]: ${PATCH_FILE}"
+    if [ ! -f "${patchFile}" ]; then
+        echo ">	No such	file [PATCH]: ${patchFile}"
         return 1
     fi
 
-    if [ ! -f "${TARGET_FILE}" ]; then
-        echo "> No such file [TARGET]: ${TARGET_FILE}"
+    if [ ! -f "${targetFile}" ]; then
+        echo "> No such file [TARGET]: ${targetFile}"
         return 1
     fi
 
-    echo "> Loading patch ${PATCH_FILE}"
-    echo "  Patching '${TARGET_FILE}'..."
-    patch --verbose "${TARGET_FILE}" <"${PATCH_FILE}"
+    echo "> Loading patch ${patchFile}"
+    echo "  Patching '${targetFile}'..."
+    patch --verbose "${targetFile}" <"${patchFile}"
 
-    MARK_READ_ONLY="${3:-true}"
-    if [ "${MARK_READ_ONLY}" = "true" ]; then
+    local markReadOnly="${3:-true}"
+    if [ "${markReadOnly}" = "true" ]; then
         # This is done in order to prevent WordPress overwriting the file
         echo "  Marking the patched file read-only..."
-        chmod 0440 "${TARGET_FILE}"
+        chmod 0440 "${targetFile}"
     fi
 
     return 0

@@ -5,17 +5,16 @@
 # $2 - plugin version (optional)
 # Returns 0 on success, X on failure
 download() {
-    PLUGIN_SLUG="${1:?download: PLUGIN_SLUG is required}"
-    PLUGIN_VERSION="${2:-}"
+    local pluginSlug="${1:?download: PLUGIN_SLUG is required}"
+    local pluginVersion="${2:-}"
+    local pluginFilename="${pluginSlug}.zip"
 
-    if [ -n "${PLUGIN_VERSION}" ]; then
-        PLUGIN_FILENAME="${PLUGIN_SLUG}.${PLUGIN_VERSION}.zip"
-    else
-        PLUGIN_FILENAME="${PLUGIN_SLUG}.zip"
+    if [ -n "${pluginVersion}" ]; then
+        pluginFilename="${pluginSlug}.${pluginVersion}.zip"
     fi
 
-    curl --fail -gsO "https://downloads.wordpress.org/plugin/${PLUGIN_FILENAME}" || return $?
-    echo "${PLUGIN_FILENAME}"
+    curl --fail -gsO "https://downloads.wordpress.org/plugin/${pluginFilename}" || return $?
+    echo "${pluginFilename}"
     return 0
 }
 
@@ -25,19 +24,18 @@ download() {
 # $3 - target directory (optional)
 # Returns 0 on success, 1 on failure
 unpack() {
-    TARGET_PLUGINS_DIR="${TARGET_PLUGINS_DIR:?check: TARGET_PLUGINS_DIR is required}"
-    PLUGIN_SLUG="${1:?unpack: PLUGIN_SLUG is required}"
-    PLUGIN_VERSION="${2:-}"
+    local pluginsDir="${TARGET_PLUGINS_DIR:?check: TARGET_PLUGINS_DIR is required}"
+    local pluginSlug="${1:?unpack: PLUGIN_SLUG is required}"
+    local pluginVersion="${2:-}"
+    local pluginFilename="${pluginSlug}.zip"
 
-    if [ -n "${PLUGIN_VERSION}" ]; then
-        PLUGIN_FILENAME="${PLUGIN_SLUG}.${PLUGIN_VERSION}.zip"
-    else
-        PLUGIN_FILENAME="${PLUGIN_SLUG}.zip"
+    if [ -n "${pluginVersion}" ]; then
+        pluginFilename="${pluginSlug}.${pluginVersion}.zip"
     fi
 
-    if [ -f "${PLUGIN_FILENAME}" ]; then
-        unzip -qq -d "${TARGET_PLUGINS_DIR}" "${PLUGIN_FILENAME}" || return $?
-        rm "${PLUGIN_FILENAME}" -f
+    if [ -f "${pluginFilename}" ]; then
+        unzip -qq -d "${pluginsDir}" "${pluginFilename}" || return $?
+        rm "${pluginFilename}" -f
         return 0
     fi
     return 1
@@ -47,23 +45,22 @@ unpack() {
 # $1 - plugin slug
 # Returns 0 if plugin is installed, 1 otherwise
 check() {
-    TARGET_PLUGINS_DIR="${TARGET_PLUGINS_DIR:?check: TARGET_PLUGINS_DIR is required}"
-    PLUGIN_SLUG="${1:?check: PLUGIN_SLUG is required}"
-
-    PLUGIN_PATH="${TARGET_PLUGINS_DIR}/${PLUGIN_SLUG}"
+    local pluginsDir="${TARGET_PLUGINS_DIR:?check: TARGET_PLUGINS_DIR is required}"
+    local pluginSlug="${1:?check: PLUGIN_SLUG is required}"
+    local pluginPath="${pluginsDir}/${pluginSlug}"
 
     # Check if plugin directory exists
-    if [ ! -d "${PLUGIN_PATH}" ]; then
+    if [ ! -d "${pluginPath}" ]; then
         return 1
     fi
 
     # Check if plugin file exists - if yes, plugin is probably installed successfully
-    if [ -f "${PLUGIN_PATH}/${PLUGIN_SLUG}.php" ]; then
+    if [ -f "${pluginPath}/${pluginSlug}.php" ]; then
         return 0
     fi
 
     # Check if plugin directory is empty - if not, plugin is probably installed successfully
-    if [ "$(ls -A "${PLUGIN_PATH}")" ]; then
+    if [ "$(ls -A "${pluginPath}")" ]; then
         return 0
     fi
 
@@ -75,29 +72,28 @@ check() {
 # $1 - plugin slug
 # Returns 0 on success, X on failure
 delete() {
-    TARGET_PLUGINS_DIR="${TARGET_PLUGINS_DIR:?delete: TARGET_PLUGINS_DIR is required}"
-    PLUGIN_SLUG="${1:?delete: PLUGIN_SLUG is required}"
-
-    PLUGIN_PATH="${TARGET_PLUGINS_DIR}/${PLUGIN_SLUG}"
+    local pluginsDir="${TARGET_PLUGINS_DIR:?delete: TARGET_PLUGINS_DIR is required}"
+    local pluginSlug="${1:?delete: PLUGIN_SLUG is required}"
+    local pluginPath="${pluginsDir}/${pluginSlug}"
 
     # Check if plugin directory exists
-    if [ ! -d "${PLUGIN_PATH}" ]; then
+    if [ ! -d "${pluginPath}" ]; then
         return 1
     fi
 
-    rm -rf "${PLUGIN_PATH}"
+    rm -rf "${pluginPath}"
     return $?
 }
 
 # Main function
 main() {
-    COMMAND="${1:?COMMAND is required}"
     TARGET_PLUGINS_DIR="${WP_PLUGINS_PATH:?WP_PLUGINS_PATH is required}"
-
     export TARGET_PLUGINS_DIR
 
+    local action="${1:?ACTION is required}"
+
     # Execute command by calling function with the same name
-    case "${COMMAND}" in
+    case "${action}" in
     download)
         download "${@:2}"
         return $?
@@ -115,11 +111,10 @@ main() {
         return $?
         ;;
     *)
-        echo "Error: Unknown command '${COMMAND}'"
+        echo "Error: Unknown action '${action}'"
         return 1
         ;;
     esac
 }
 
 main "${@}"
-exit $?

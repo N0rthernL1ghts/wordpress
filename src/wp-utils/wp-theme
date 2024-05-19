@@ -5,17 +5,16 @@
 # $2 - theme version (optional)
 # Returns 0 on success, X on failure
 download() {
-    THEME_SLUG="${1:?download: THEME_SLUG is required}"
-    THEME_VERSION="${2:-}"
+    local themeSlug="${1:?download: THEME_SLUG is required}"
+    local themeVersion="${2:-}"
+    local themeFilename="${themeSlug}.zip"
 
-    if [ -n "${THEME_VERSION}" ]; then
-        THEME_FILENAME="${THEME_SLUG}.${THEME_VERSION}.zip"
-    else
-        THEME_FILENAME="${THEME_SLUG}.zip"
+    if [ -n "${themeVersion}" ]; then
+        themeFilename="${themeSlug}.${themeVersion}.zip"
     fi
 
-    curl --fail -gsO "https://downloads.wordpress.org/theme/${THEME_FILENAME}" || return $?
-    echo "${THEME_FILENAME}"
+    curl --fail -gsO "https://downloads.wordpress.org/theme/${themeFilename}" || return $?
+    echo "${themeFilename}"
     return 0
 }
 
@@ -24,19 +23,18 @@ download() {
 # $2 - theme version (optional)
 # Returns 0 on success, 1 on failure
 unpack() {
-    TARGET_THEMES_DIR="${TARGET_THEMES_DIR:?check: TARGET_THEMES_DIR is required}"
-    THEME_SLUG="${1:?unpack: THEME_SLUG is required}"
-    THEME_VERSION="${2:-}"
+    local themesDir="${TARGET_THEMES_DIR:?check: TARGET_THEMES_DIR is required}"
+    local themeSlug="${1:?unpack: THEME_SLUG is required}"
+    local themeVersion="${2:-}"
+    local themeFilename="${themeSlug}.zip"
 
-    if [ -n "${THEME_VERSION}" ]; then
-        THEME_FILENAME="${THEME_SLUG}.${THEME_VERSION}.zip"
-    else
-        THEME_FILENAME="${THEME_SLUG}.zip"
+    if [ -n "${themeVersion}" ]; then
+        themeFilename="${themeSlug}.${themeVersion}.zip"
     fi
 
-    if [ -f "${THEME_FILENAME}" ]; then
-        unzip -qq -d "${TARGET_THEMES_DIR}" "${THEME_FILENAME}" || return $?
-        rm "${THEME_FILENAME}" -f
+    if [ -f "${themeFilename}" ]; then
+        unzip -qq -d "${themesDir}" "${themeFilename}" || return $?
+        rm "${themeFilename}" -f
         return 0
     fi
     return 1
@@ -46,28 +44,27 @@ unpack() {
 # $1 - theme slug
 # Returns 0 if theme is installed, 1 otherwise
 check() {
-    TARGET_THEMES_DIR="${TARGET_THEMES_DIR:?check: TARGET_THEMES_DIR is required}"
-    THEME_SLUG="${1:?check: THEME_SLUG is required}"
-
-    THEME_PATH="${TARGET_THEMES_DIR}/${THEME_SLUG}"
+    local themesDir="${TARGET_THEMES_DIR:?check: TARGET_THEMES_DIR is required}"
+    local themeSlug="${1:?check: THEME_SLUG is required}"
+    local themePath="${themesDir}/${themeSlug}"
 
     # Check if theme directory exists
-    if [ ! -d "${THEME_PATH}" ]; then
+    if [ ! -d "${themePath}" ]; then
         return 1
     fi
 
     # Check if theme theme.json exists - if yes, theme is probably installed successfully
-    if [ -f "${THEME_PATH}/theme.json" ]; then
+    if [ -f "${themePath}/theme.json" ]; then
         return 0
     fi
 
     # Check if theme index.php exists - if yes, theme is probably installed successfully
-    if [ -f "${THEME_PATH}/index.php" ]; then
+    if [ -f "${themePath}/index.php" ]; then
         return 0
     fi
 
     # Check if theme directory is empty - if not, theme is probably installed successfully
-    if [ "$(ls -A "${THEME_PATH}")" ]; then
+    if [ "$(ls -A "${themePath}")" ]; then
         return 0
     fi
 
@@ -79,30 +76,28 @@ check() {
 # $1 - theme slug
 # Returns 0 on success, X on failure
 delete() {
-    TARGET_THEMES_DIR="${TARGET_THEMES_DIR:?delete: TARGET_THEMES_DIR is required}"
-    THEME_SLUG="${1:?delete: THEME_SLUG is required}"
-
-    THEME_PATH="${TARGET_THEMES_DIR}/${THEME_SLUG}"
+    local themesDir="${TARGET_THEMES_DIR:?delete: TARGET_THEMES_DIR is required}"
+    local themeSlug="${1:?delete: THEME_SLUG is required}"
+    local themePath="${themesDir}/${themeSlug}"
 
     # Check if theme directory exists
-    if [ ! -d "${THEME_PATH}" ]; then
+    if [ ! -d "${themePath}" ]; then
         return 1
     fi
 
-    rm -rf "${THEME_PATH}"
+    rm -rf "${themePath}"
     return $?
 }
 
-
 # Main function
 main() {
-    COMMAND="${1:?COMMAND is required}"
     TARGET_THEMES_DIR="${WP_THEMES_PATH:?WP_THEMES_PATH is required}"
-
     export TARGET_THEMES_DIR
 
+    local action="${1:?ACTION is required}"
+
     # Execute command by calling function with the same name
-    case "${COMMAND}" in
+    case "${action}" in
     download)
         download "${@:2}"
         return $?
@@ -120,11 +115,10 @@ main() {
         return $?
         ;;
     *)
-        echo "Error: Unknown command '${COMMAND}'"
+        echo "Error: Unknown action '${action}'"
         return 1
         ;;
     esac
 }
 
 main "${@}"
-exit $?
