@@ -14,6 +14,9 @@ FROM scratch AS rootfs
 # Install wp-cli
 COPY --from=wp-cli ["/usr/local/bin/wp", "/usr/local/bin/wp-cli"]
 
+# Install wp-utils
+COPY ["./src/wp-utils/", "/usr/local/bin/"]
+
 # Overlay
 COPY ["./rootfs/", "/"]
 
