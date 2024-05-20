@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-
-
 # This is development util
 main() {
     local wpVersion="${1:-6.5.3}"
 
     set -ex
-    
+
     docker build \
         --file=Dockerfile.dev \
         --build-arg="WP_VERSION=${wpVersion}" \
