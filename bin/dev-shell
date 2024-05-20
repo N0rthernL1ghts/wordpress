@@ -15,7 +15,9 @@ main() {
         --init \
         --rm \
         -it \
-        -v "${PWD}/src/:/workspace" \
+        -v "${PWD}/:/workspace" \
+        -v "${PWD}/data/fish/config:/root/.config/fish" \
+        -v "${PWD}/data/fish/local:/root/.local/share/fish" \
         "localhost/nlss-wp-dev:${wpVersion}"
 }
 
