@@ -1,0 +1,19 @@
+ARG WP_VERSION=6.5.3
+FROM scratch AS rootfs
+
+# Install composer
+COPY --from=composer:2.7 ["/usr/bin/composer", "/usr/local/bin/composer"]
+
+
+
+ARG WP_VERSION
+FROM ghcr.io/n0rthernl1ghts/wordpress:${WP_VERSION}
+
+RUN set -eux \
+    && apk add --update --no-cache exa file fish git less nano openssh-client rsync tree unzip wget
+
+COPY --from=rootfs ["/", "/"]
+
+
+WORKDIR "/workspace"
+ENTRYPOINT ["/usr/bin/fish"]
