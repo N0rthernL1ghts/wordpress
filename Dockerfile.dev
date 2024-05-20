@@ -4,6 +4,12 @@ FROM scratch AS rootfs
 # Install composer
 COPY --from=composer:2.7 ["/usr/bin/composer", "/usr/local/bin/composer"]
 
+# Install shellcheck
+COPY --from=koalaman/shellcheck:stable ["/bin/shellcheck", "/usr/local/bin/shellcheck"]
+
+# Install shfmt
+COPY --from=mvdan/shfmt:latest ["/bin/shfmt", "/usr/local/bin/shfmt"]
+
 
 
 ARG WP_VERSION
