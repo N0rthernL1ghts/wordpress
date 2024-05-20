@@ -1,4 +1,19 @@
 ARG WP_VERSION=6.5.3
+FROM ghcr.io/n0rthernl1ghts/wordpress:${WP_VERSION} AS composer-tools
+
+COPY --from=composer:2.7 ["/usr/bin/composer", "/usr/local/bin/composer"]
+
+RUN set -eux \
+    && apk add --update --no-cache git unzip \
+    && export COMPOSER_ALLOW_SUPERUSER=1 \
+    && export COMPOSER_HOME="/tmp/composer" \
+    && composer global require --no-interaction --ignore-platform-reqs \
+        php-parallel-lint/php-console-highlighter \
+        php-parallel-lint/php-parallel-lint \
+        squizlabs/php_codesniffer
+
+
+
 FROM scratch AS rootfs
 
 # Install composer
@@ -10,16 +25,25 @@ COPY --from=koalaman/shellcheck:stable ["/bin/shellcheck", "/usr/local/bin/shell
 # Install shfmt
 COPY --from=mvdan/shfmt:latest ["/bin/shfmt", "/usr/local/bin/shfmt"]
 
+# Install hadolint
+COPY --from=hadolint/hadolint:latest ["/bin/hadolint", "/usr/local/bin/hadolint"]
+
+# Composer tools
+COPY --from=composer-tools ["/tmp/composer/", "/root/.composer/"]
+
 
 
 ARG WP_VERSION
 FROM ghcr.io/n0rthernl1ghts/wordpress:${WP_VERSION}
+
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 RUN set -eux \
     && apk add --update --no-cache exa file fish git less nano openssh-client rsync tree unzip wget
 
 COPY --from=rootfs ["/", "/"]
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR "/workspace"
 ENTRYPOINT ["/usr/bin/fish"]
