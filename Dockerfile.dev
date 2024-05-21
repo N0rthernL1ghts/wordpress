@@ -39,7 +39,7 @@ FROM ghcr.io/n0rthernl1ghts/wordpress:${WP_VERSION}
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 RUN set -eux \
-    && apk add --update --no-cache exa file fish git less nano openssh-client rsync tree unzip wget
+    && apk add --update --no-cache curl exa file fish git less nano openssh-client rsync tree unzip wget
 
 COPY --from=rootfs ["/", "/"]
 
