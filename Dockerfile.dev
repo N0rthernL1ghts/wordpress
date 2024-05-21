@@ -1,5 +1,5 @@
 ARG WP_VERSION=6.5.3
-FROM ghcr.io/n0rthernl1ghts/wordpress:${WP_VERSION} AS composer-tools
+FROM ghcr.io/n0rthernl1ghts/wordpress:${WP_VERSION} AS composer-build
 
 COPY --from=composer:2.7 ["/usr/bin/composer", "/usr/local/bin/composer"]
 
@@ -16,9 +16,6 @@ RUN set -eux \
 
 FROM scratch AS rootfs
 
-# Install composer
-COPY --from=composer:2.7 ["/usr/bin/composer", "/usr/local/bin/composer"]
-
 # Install shellcheck
 COPY --from=koalaman/shellcheck:stable ["/bin/shellcheck", "/usr/local/bin/shellcheck"]
 
@@ -28,8 +25,9 @@ COPY --from=mvdan/shfmt:latest ["/bin/shfmt", "/usr/local/bin/shfmt"]
 # Install hadolint
 COPY --from=hadolint/hadolint:latest ["/bin/hadolint", "/usr/local/bin/hadolint"]
 
-# Composer tools
-COPY --from=composer-tools ["/tmp/composer/", "/root/.composer/"]
+# Install composer
+COPY --from=composer-build ["/usr/local/bin/composer", "/usr/local/bin/"]
+COPY --from=composer-build ["/tmp/composer/", "/root/.composer/"]
 
 
 
