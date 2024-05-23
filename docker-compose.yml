@@ -3,19 +3,7 @@ x-wordpress-configuration-env: &wordpress-configuration-env
   WORDPRESS_REDIS_HOST: redis
   WORDPRESS_CACHE: 1
   WORDPRESS_CACHE_KEY_SALT: 'Wp-'
-  WORDPRESS_DB_USER: wordpress
-  WORDPRESS_DB_NAME: wordpress
-  WORDPRESS_DB_HOST: database
-  WORDPRESS_DB_PASSWORD: ''
   WORDPRESS_TABLE_PREFIX: 'wp_'
-  WORDPRESS_AUTH_KEY: ''
-  WORDPRESS_SECURE_AUTH_KEY: ''
-  WORDPRESS_LOGGED_IN_KEY: ''
-  WORDPRESS_NONCE_KEY: ''
-  WORDPRESS_AUTH_SALT: ''
-  WORDPRESS_SECURE_AUTH_SALT: ''
-  WORDPRESS_LOGGED_IN_SALT: ''
-  WORDPRESS_NONCE_SALT: ''
   WORDPRESS_DEBUG: 0
   DEFAULT_EMAIL: "webmaster@example.com"
   WORDPRESS_CONFIG_EXTRA: |
@@ -48,6 +36,9 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+    env_file:
+      - ./.secrets/wp-salts.env
+      - ./.secrets/wp-database.env
     environment:
       <<: [ *wordpress-configuration-env ]
       CRON_ENABLED: "false"
