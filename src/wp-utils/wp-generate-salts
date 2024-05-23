@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+main() {
+    local keys=("AUTH_KEY" "SECURE_AUTH_KEY" "LOGGED_IN_KEY" "NONCE_KEY" "AUTH_SALT" "SECURE_AUTH_SALT" "LOGGED_IN_SALT" "NONCE_SALT")
+    local key
+    local value
+
+    for key in "${keys[@]}"; do
+        value="$(src/wp-utils/wp-generate-salt 64)"
+        echo "WORDPRESS_${key}='${value}'"
+    done
+}
+
+main "${@}"

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+main() {
+    local length="${1:?}"
+    tr -dc 'a-zA-Z0-9!@#$%^&*()-=_+[]{};:,.<>?`~' </dev/urandom | head -c "${length}"
+}
+main "${@}"
