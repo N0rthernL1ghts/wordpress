@@ -1,6 +1,7 @@
 .idea/
 wordpress.iml
 data/
+.secrets/
 build/patch-util/wp-src/
 build/tests-util/composer.lock
 build/tests-util/vendor/
