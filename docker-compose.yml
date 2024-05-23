@@ -1,0 +1,124 @@
+x-wordpress-configuration-env: &wordpress-configuration-env
+  WORDPRESS_PLUGIN_LIST: "maintenance redis-cache"
+  WORDPRESS_REDIS_HOST: redis
+  WORDPRESS_CACHE: 1
+  WORDPRESS_CACHE_KEY_SALT: 'Wp-'
+  WORDPRESS_DB_USER: wordpress
+  WORDPRESS_DB_NAME: wordpress
+  WORDPRESS_DB_HOST: database
+  WORDPRESS_DB_PASSWORD: ''
+  WORDPRESS_TABLE_PREFIX: 'wp_'
+  WORDPRESS_AUTH_KEY: ''
+  WORDPRESS_SECURE_AUTH_KEY: ''
+  WORDPRESS_LOGGED_IN_KEY: ''
+  WORDPRESS_NONCE_KEY: ''
+  WORDPRESS_AUTH_SALT: ''
+  WORDPRESS_SECURE_AUTH_SALT: ''
+  WORDPRESS_LOGGED_IN_SALT: ''
+  WORDPRESS_NONCE_SALT: ''
+  WORDPRESS_DEBUG: 0
+  DEFAULT_EMAIL: "webmaster@example.com"
+  WORDPRESS_CONFIG_EXTRA: |
+    define('WP_AUTO_UPDATE_CORE', false);
+    define('WP_SITEURL', 'https://www.example.com');
+    define('WP_HOME', 'https://www.example.com');
+    define('WP_CACHE', true);
+    define('WP_CACHE_KEY_SALT', 'Wp-');
+    define('WP_REDIS_HOST', "cache");
+    define('DISABLE_WP_CRON', true);
+    $$_SERVER['HTTP_UPGRADE_INSECURE_REQUESTS'] = false;
+    $$_SERVER['HTTP_X_FORWARDED_PORT'] = 443;
+    $$_SERVER['HTTP_X_FORWARDED_SSL'] = 'on';
+    $$_SERVER['HTTPS'] = 'on';
+    $$_SERVER['SERVER_PORT'] = 443;
+    $$_SERVER['REQUEST_SCHEME'] = 'https';
+  # $_SERVER definitions above are set to trick WP that it's accessed over HTTPS. This is typically useful only behind reverse proxy and should be avoided in production
+
+networks:
+  default:
+
+services:
+  wordpress:
+    image: ghcr.io/n0rthernl1ghts/wordpress:6.5.3
+    deploy:
+      restart_policy:
+        condition: any
+    healthcheck: # See: src/wp-utils/healthcheck
+      test: [ "CMD", "/usr/local/bin/healthcheck" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    environment:
+      <<: [ *wordpress-configuration-env ]
+      CRON_ENABLED: "false"
+    labels: # This configures traefik - if you have it. You also need to make sure that this service is in the same network with Traefik instance
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(`example.com`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.tls.certresolver=le"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.rule=Host(`example.com`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-https.entrypoints=websecure"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80"
+    volumes:
+      - ./data/wordpress/wp-content:/var/www/html/wp-content
+    networks:
+      default:
+
+  # It's a good idea to have a separate service for the cron job
+  cron:
+    extends:
+      service: wordpress
+    deploy:
+      resources:
+        limits:
+          memory: 512M # Limit the memory for the cron job to 512 MB. This is a good practice to avoid memory leaks.
+    environment:
+      CRON_ENABLED: "true"
+
+  # Redis is optional, but it works really well for caching. If removed, please update x-wordpress-configuration-env
+  cache:
+    image: redis:alpine
+    init: true
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/redis-cli", "PING"]
+      interval: 20s
+      timeout: 3s
+      retries: 3
+    deploy:
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 64M
+    networks:
+      default:
+
+  # Please update environment accordingly
+  database:
+    image: 'ghcr.io/n0rthernl1ghts/mariadb:10.11'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 512M # Should be adjusted accordingly to the website size. 512MB is usually enough for small website
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    environment:
+      PUID: 1000
+      PGID: 1000
+      MARIADB_INIT_DATABASES: wordpress
+      MARIADB_INIT_USERS: wordpress
+      MARIADB_PASSWORD: wordpress # CHANGE THIS!
+      MARIADB_ROOT_PASSWORD: 'super-secure-root-password123' # CHANGE THIS!
+      FORCE_CONFIG_OVERWRITE: 1
+    volumes:
+      - ./data/database/config:/config
+      - ./data/database/data:/var/lib/mysql
+    networks:
+      default:
