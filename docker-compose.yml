@@ -108,8 +108,6 @@ services:
       PUID: 1000
       PGID: 1000
       MARIADB_INIT_DATABASES: wordpress
-      MARIADB_INIT_USERS: wordpress
-      MARIADB_PASSWORD: wordpress # CHANGE THIS!
       FILE__MARIADB_ROOT_PASSWORD: /run/secrets/database_root_password
       FORCE_CONFIG_OVERWRITE: 1
     volumes:
