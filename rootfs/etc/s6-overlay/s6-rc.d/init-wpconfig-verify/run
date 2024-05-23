@@ -43,6 +43,28 @@ checkSaltsEnv() {
     fi
 }
 
+checkDatabaseEnv() {
+    if [ -z "${WORDPRESS_DB_HOST}" ]; then
+        echo "- WORDPRESS_DB_HOST is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_DB_USER}" ]; then
+        echo "- WORDPRESS_DB_USER is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_DB_PASSWORD}" ]; then
+        echo "- WORDPRESS_DB_PASSWORD is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_DB_NAME}" ]; then
+        echo "- WORDPRESS_DB_NAME is not set"
+        return 1
+    fi
+}
+
 # init-wpconfig-verify main
 main() {
     # This will prepend service name to all output from here
@@ -54,5 +76,10 @@ main() {
         return 1
     fi
 
+    echo "Checking database configuration..."
+    if ! checkDatabaseEnv; then
+        echo "^^^ Some or all of the database configuration not set. Cannot continue."
+        return 1
+    fi
 }
 main
