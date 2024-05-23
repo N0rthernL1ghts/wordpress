@@ -1,0 +1,58 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+checkSaltsEnv() {
+    if [ -z "${WORDPRESS_AUTH_KEY}" ]; then
+        echo "- WORDPRESS_AUTH_KEY is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_SECURE_AUTH_KEY}" ]; then
+        echo "- WORDPRESS_SECURE_AUTH_KEY is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_LOGGED_IN_KEY}" ]; then
+        echo "- WORDPRESS_LOGGED_IN_KEY is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_NONCE_KEY}" ]; then
+        echo "- WORDPRESS_NONCE_KEY is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_AUTH_SALT}" ]; then
+        echo "- WORDPRESS_AUTH_SALT is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_SECURE_AUTH_SALT}" ]; then
+        echo "- WORDPRESS_SECURE_AUTH_SALT is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_LOGGED_IN_SALT}" ]; then
+        echo "- WORDPRESS_LOGGED_IN_SALT is not set"
+        return 1
+    fi
+
+    if [ -z "${WORDPRESS_NONCE_SALT}" ]; then
+        echo "- WORDPRESS_NONCE_SALT is not set"
+        return 1
+    fi
+}
+
+# init-wpconfig-verify main
+main() {
+    # This will prepend service name to all output from here
+    exec > >(while read -r line; do echo "[init-wpconfig-verify] ${line}"; done) 2>&1
+
+    echo "Checking salts..."
+    if ! checkSaltsEnv; then
+        echo "^^^ Some or all of the salts are not set. Cannot continue."
+        return 1
+    fi
+
+}
+main
