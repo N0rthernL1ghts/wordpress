@@ -1,0 +1,56 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+await_database() {
+    # Settings
+    local interval="1"
+    local status
+
+    # For loop
+    for i in {1..30}
+    do
+        # Check if database is reachable
+        status="$(wp core is-installed 2>&1)"
+
+        # Check if status contains database connection (partial match)
+        if echo "${status}" | grep -q "Error establishing"; then
+            echo "Database is not reachable, retrying in ${interval} seconds [${i}/30]"
+            sleep "${interval}"
+            continue
+        fi
+
+        return 0
+    done
+}
+
+# init-install-wordpress main
+main() {
+    # This will prepend service name to all output from here
+    exec > >(while read -r line; do echo "[init-install-wordpress] ${line}"; done) 2>&1
+
+    if [ "${WORDPRESS_INIT_ENABLE:-false}" = "false" ]; then
+        echo "WordPress init is disabled"
+        return 0
+    fi
+
+    # Check if WordPress is already installed
+    if wp core is-installed 2>&1; then
+        echo "WordPress is already installed"
+        return 0
+    fi
+
+    if ! await_database; then
+        echo "Error: Database is not reachable"
+        return 1
+    fi
+
+    wp core install \
+        --url="${WORDPRESS_INIT_URL:?}" \
+        --title="${WORDPRESS_INIT_TITLE:-WordPress}" \
+        --admin_user="${WORDPRESS_INIT_ADMIN_USER:?}" \
+        --admin_password="${WORDPRESS_INIT_ADMIN_PASSWORD:?}" \
+        --admin_email="${WORDPRESS_INIT_ADMIN_EMAIL:?}" \
+        --skip-email
+
+}
+main

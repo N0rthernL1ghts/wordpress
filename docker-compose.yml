@@ -22,12 +22,23 @@ x-wordpress-configuration-env: &wordpress-configuration-env
     $$_SERVER['REQUEST_SCHEME'] = 'https';
   # $_SERVER definitions above are set to trick WP that it's accessed over HTTPS. This is typically useful only behind reverse proxy and should be avoided in production
 
+x-wordpress-init-env: &wordpress-init-env
+  WORDPRESS_INIT_ENABLE: "true"
+  WORDPRESS_INIT_ADMIN_USER: admin
+  WORDPRESS_INIT_ADMIN_PASSWORD: admin
+  WORDPRESS_INIT_ADMIN_EMAIL: admin@example.com
+  WORDPRESS_INIT_SITE_TITLE: "Example.com"
+  WORDPRESS_INIT_SITE_URL: "https://www.example.com"
+
+
 networks:
   default:
 
 secrets:
    database_root_password:
      file: ./.secrets/database_root_password.txt
+   wordpress_database_password:
+     file: ./.secrets/wordpress_database_password.txt
 
 services:
   wordpress:
@@ -44,7 +55,7 @@ services:
       - ./.secrets/wp-salts.env
       - ./.secrets/wp-database.env
     environment:
-      <<: [ *wordpress-configuration-env ]
+      <<: [ *wordpress-configuration-env, *wordpress-init-env ]
       CRON_ENABLED: "false"
     labels: # This configures traefik - if you have it. You also need to make sure that this service is in the same network with Traefik instance
       - "traefik.enable=true"
@@ -108,12 +119,15 @@ services:
       PUID: 1000
       PGID: 1000
       MARIADB_INIT_DATABASES: wordpress
+      MARIADB_INIT_USERS: wordpress
       FILE__MARIADB_ROOT_PASSWORD: /run/secrets/database_root_password
+      FILE__MARIADB_USER_wordpress_PASSWORD: /run/secrets/wordpress_database_password
       FORCE_CONFIG_OVERWRITE: 1
     volumes:
       - ./data/database/config:/config
       - ./data/database/data:/var/lib/mysql
     secrets:
       - database_root_password
+      - wordpress_database_password
     networks:
       default:
