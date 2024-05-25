@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+get-repository-root() {
+    git rev-parse --show-toplevel
+}
+
+generate-secrets-password() {
+    set -e
+    local length="${1:?}"
+    local secret="${2:?}"
+
+    # Set path to the secret file
+    local secretPath="${SCRIPT_ROOT}/.secrets/${secret}.txt"
+
+    if [ -f "${secretPath}" ] && [ -s "${secretPath}" ]; then
+        echo "> Not overwritting already existing secret ${secret}"
+        return 1
+    fi
+
+    export LC_ALL=C
+
+    local randomString
+    randomString="$(tr -dc 'a-zA-Z0-9!@#$%^&*()-=_+[]{};:,.<>?`~' </dev/urandom | head -c "${length}")"
+
+    echo "> Writting ${#randomString} bytes to ${secretPath}"
+    echo -n "${randomString}" >"${secretPath}"
+}
+
+main() {
+    SCRIPT_ROOT="$(get-repository-root)"
+    export SCRIPT_ROOT
+
+    mkdir -p "${SCRIPT_ROOT}/.secrets" &
+    mkdir -p "${SCRIPT_ROOT}/data" &
+    wait
+
+    generate-secrets-password 32 wordpress_database_password &
+    generate-secrets-password 32 database_root_password &
+    wait
+
+    {
+        echo "WORDPRESS_DB_USER='wordpress'"
+        echo "WORDPRESS_DB_NAME='wordpress'"
+        echo "WORDPRESS_DB_PASSWORD='$(cat "${SCRIPT_ROOT}/.secrets/wordpress_database_password.txt")'"
+        echo "WORDPRESS_DB_HOST='database'"
+    } >"${SCRIPT_ROOT}/.secrets/wp-database.env"
+
+    echo "Rewrote ${SCRIPT_ROOT}/.secrets/wp-database.env file"
+}
+
+main "$@"
