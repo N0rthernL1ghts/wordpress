@@ -45,8 +45,8 @@ main() {
     fi
 
     wp core install \
-        --url="${WORDPRESS_INIT_URL:?}" \
-        --title="${WORDPRESS_INIT_TITLE:-WordPress}" \
+        --url="${WORDPRESS_INIT_SITE_URL:?}" \
+        --title="${WORDPRESS_INIT_SITE_TITLE:-WordPress}" \
         --admin_user="${WORDPRESS_INIT_ADMIN_USER:?}" \
         --admin_password="${WORDPRESS_INIT_ADMIN_PASSWORD:?}" \
         --admin_email="${WORDPRESS_INIT_ADMIN_EMAIL:?}" \
