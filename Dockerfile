@@ -3,8 +3,8 @@ ARG WP_VERSION=6.1.0
 ARG WP_PATCH_VERSION=5.9.1
 
 # WordPress resources
-FROM --platform=${TARGETPLATFORM} wordpress:cli-php${PHP_VERSION} AS wp-cli
-FROM --platform=${TARGETPLATFORM} wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine AS wp-src
+FROM wordpress:cli-php${PHP_VERSION} AS wp-cli
+FROM wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine AS wp-src
 
 
 
@@ -31,7 +31,7 @@ COPY ["patches/${WP_PATCH_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
 
 
 # Stage 3 - Final
-FROM --platform=${TARGETPLATFORM} ghcr.io/n0rthernl1ghts/wordpress-unit-base:2.1.0
+FROM ghcr.io/n0rthernl1ghts/wordpress-unit-base:2.1.0
 
 RUN apk add --update --no-cache patch
 
