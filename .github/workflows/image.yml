@@ -44,7 +44,7 @@ jobs:
           wait-interval: 20
       -
         name: Build and push
-        uses: docker/bake-action@v5.7.0
+        uses: docker/bake-action@v5.10.0
         with:
           files: build/docker-bake.hcl
           push: true
