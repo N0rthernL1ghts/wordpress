@@ -40,6 +40,10 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * If you have custom scripts, you should review them and migrate to new format
   * S6 supervisor v3 brings many improvements and bugfixes in addition to performance improvements
   * This change is necessary to ensure compatibility with future base image updates
+- 2024-10-28 Deprecate docker hub images
+  * Done as protest against Docker Hub's hostile behavior towards open source community
+  * All images will be removed from docker hub
+  * Please use ghcr.io/n0rthernl1ghts/wordpress instead
 
 #### Public builds (docker)
 
