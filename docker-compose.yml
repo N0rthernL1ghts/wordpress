@@ -6,6 +6,9 @@ x-wordpress-configuration-env: &wordpress-configuration-env
   WORDPRESS_TABLE_PREFIX: 'wp_'
   WORDPRESS_DEBUG: 0
   DEFAULT_EMAIL: "webmaster@example.com"
+  WORDPRESS_DB_USER: wordpress
+  WORDPRESS_DB_NAME: wordpress
+  WORDPRESS_DB_HOST: database
   WORDPRESS_CONFIG_EXTRA: |
     define('WP_AUTO_UPDATE_CORE', false);
     define('WP_SITEURL', 'https://www.example.com');
@@ -22,10 +25,22 @@ x-wordpress-configuration-env: &wordpress-configuration-env
     $$_SERVER['REQUEST_SCHEME'] = 'https';
   # $_SERVER definitions above are set to trick WP that it's accessed over HTTPS. This is typically useful only behind reverse proxy and should be avoided in production
 
+# Required since nginx unit will not pass environment variables s6-envdir loads. wp-config.php has docker_getenv()
+x-wordpress-secrets-files: &wordpress-secrets-files-env
+  WORDPRESS_AUTH_KEY_FILE: /run/secrets/wordpress_auth_key
+  WORDPRESS_SECURE_AUTH_KEY_FILE: /run/secrets/wordpress_secure_auth_key
+  WORDPRESS_LOGGED_IN_KEY_FILE: /run/secrets/wordpress_logged_in_key
+  WORDPRESS_NONCE_KEY_FILE: /run/secrets/wordpress_nonce_key
+  WORDPRESS_AUTH_SALT_FILE: /run/secrets/wordpress_auth_salt
+  WORDPRESS_SECURE_AUTH_SALT_FILE: /run/secrets/wordpress_secure_auth_salt
+  WORDPRESS_LOGGED_IN_SALT_FILE: /run/secrets/wordpress_logged_in_salt
+  WORDPRESS_NONCE_SALT_FILE: /run/secrets/wordpress_nonce_salt
+  WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wordpress_db_password
+
 x-wordpress-init-env: &wordpress-init-env
   WORDPRESS_INIT_ENABLE: "true"
   WORDPRESS_INIT_ADMIN_USER: admin
-  WORDPRESS_INIT_ADMIN_PASSWORD: admin
+  # WORDPRESS_INIT_ADMIN_PASSWORD is defined in secrets
   WORDPRESS_INIT_ADMIN_EMAIL: admin@example.com
   WORDPRESS_INIT_SITE_TITLE: "Example.com"
   WORDPRESS_INIT_SITE_URL: "https://www.example.com"
@@ -35,14 +50,35 @@ networks:
   default:
 
 secrets:
-   database_root_password:
-     file: ./.secrets/database_root_password.txt
-   wordpress_database_password:
-     file: ./.secrets/wordpress_database_password.txt
+  database_root_password:
+    file: ./.secrets/database_root_password.txt
+  wordpress_database_password:
+    file: ./.secrets/wordpress_database_password.txt
+  wordpress_db_password:
+    file: ./.secrets/wordpress_database_password.txt
+  wordpress_auth_key:
+    file: ./.secrets/wordpress_auth_key
+  wordpress_secure_auth_key:
+    file: ./.secrets/wordpress_secure_auth_key
+  wordpress_logged_in_key:
+    file: ./.secrets/wordpress_logged_in_key
+  wordpress_nonce_key:
+    file: ./.secrets/wordpress_nonce_key
+  wordpress_auth_salt:
+    file: ./.secrets/wordpress_auth_salt
+  wordpress_secure_auth_salt:
+    file: ./.secrets/wordpress_secure_auth_salt
+  wordpress_logged_in_salt:
+    file: ./.secrets/wordpress_logged_in_salt
+  wordpress_nonce_salt:
+    file: ./.secrets/wordpress_nonce_salt
+  wordpress_init_admin_password:
+    file: ./.secrets/wordpress_init_admin_password
+
 
 services:
   wordpress:
-    image: ghcr.io/n0rthernl1ghts/wordpress:6.5.3
+    image: ghcr.io/n0rthernl1ghts/wordpress:6.6.2
     deploy:
       restart_policy:
         condition: any
@@ -51,11 +87,19 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-    env_file:
-      - ./.secrets/wp-salts.env
-      - ./.secrets/wp-database.env
+    secrets:
+      - wordpress_db_password
+      - wordpress_auth_key
+      - wordpress_secure_auth_key
+      - wordpress_logged_in_key
+      - wordpress_nonce_key
+      - wordpress_auth_salt
+      - wordpress_secure_auth_salt
+      - wordpress_logged_in_salt
+      - wordpress_nonce_salt
+      - wordpress_init_admin_password
     environment:
-      <<: [ *wordpress-configuration-env, *wordpress-init-env ]
+      <<: [ *wordpress-configuration-env, *wordpress-secrets-files-env, *wordpress-init-env ]
       CRON_ENABLED: "false"
     labels: # This configures traefik - if you have it. You also need to make sure that this service is in the same network with Traefik instance
       - "traefik.enable=true"
