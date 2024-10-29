@@ -54,5 +54,15 @@ main() {
         --admin_email="${WORDPRESS_INIT_ADMIN_EMAIL:?}" \
         --skip-email
 
+    sleep 0.5
+
+    # Check if WordPress is already installed
+    if wp core is-installed 2>&1; then
+        echo "WordPress installed successfully at ${WORDPRESS_INIT_SITE_URL}"
+        return 0
+    fi
+
+    echo "Error: WordPress installation failed"
+    return 1
 }
 main
