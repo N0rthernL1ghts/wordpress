@@ -40,10 +40,10 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * If you have custom scripts, you should review them and migrate to new format
   * S6 supervisor v3 brings many improvements and bugfixes in addition to performance improvements
   * This change is necessary to ensure compatibility with future base image updates
-- 2024-10-28 Deprecate docker hub images
-  * Done as protest against Docker Hub's hostile behavior towards open source community
-  * All images will be removed from docker hub
-  * Please use ghcr.io/n0rthernl1ghts/wordpress instead
+- 2024-10-28 Multiple changes
+  * Deprecate docker hub images
+  * Add WordPress versions 6.5.3 -> 6.6.2
+  * Add support for docker secrets
 
 #### Public builds (docker)
 
@@ -122,5 +122,5 @@ COPY --from=wp-plugins-installer ["/var/www/html/wp-content/plugins", "/var/www/
 * ~Install/update plugins on the fly using wp cli (with versioning)~
 * Install/update themes on the fly using wp cli (with versioning)
 * ~Apply theme and eventual plugin customizations using patch files~ (Partial)
-* Support automatic install using ENV
+* ~Support automatic install using ENV~
 * Create users automatically using ENV

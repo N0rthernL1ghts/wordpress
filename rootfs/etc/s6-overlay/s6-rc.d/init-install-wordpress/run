@@ -44,7 +44,7 @@ main() {
         return 1
     fi
 
-    wp core install \
+    s6-envdir /run/secrets_normalized wp core install \
         --url="${WORDPRESS_INIT_SITE_URL:?}" \
         --title="${WORDPRESS_INIT_SITE_TITLE:-WordPress}" \
         --admin_user="${WORDPRESS_INIT_ADMIN_USER:?}" \
