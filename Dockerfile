@@ -29,6 +29,10 @@ COPY --from=wp-src ["/usr/src/wordpress/", "/var/www/html/"]
 
 COPY ["patches/${WP_PATCH_VERSION}/wp-admin-update-core.patch", "/etc/wp-mods/"]
 
+# Copy wp-content/themes to src - This is needed if wp-content is mounted as a volume and not initialized prior
+COPY --from=wp-src ["/usr/src/wordpress/wp-content/themes/", "/usr/src/wordpress/wp-content/themes/"]
+
+
 
 # Stage 3 - Final
 FROM ghcr.io/n0rthernl1ghts/wordpress-unit-base:2.1.0
@@ -38,6 +42,7 @@ RUN apk add --update --no-cache patch
 COPY --from=rootfs ["/", "/"]
 
 RUN set -eux \
+    && apk add --update --no-cache rsync \
     && chmod a+x /usr/local/bin/wp \
     && mv "/var/www/html/wp-config-docker.php" "/var/www/html/wp-config.php" \
     && wp-apply-patch "/etc/wp-mods/wp-admin-update-core.patch" "/var/www/html/wp-admin/update-core.php" "true"

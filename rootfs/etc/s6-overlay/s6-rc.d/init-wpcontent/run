@@ -1,0 +1,24 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+# init-wpcontent main
+main() {
+    # This will prepend service name to all output from here
+    exec > >(while read -r line; do echo "[init-wpcontent] ${line}"; done) 2>&1
+
+    local wpContentDir="/var/www/html/wp-content"
+    local wpThemesDir="${wpContentDir}/themes"
+
+    # If themes directory is empty
+    if [ ! -d "${wpThemesDir}" ] || [ -z "$(ls -A "${wpThemesDir}")" ]; then
+        if [ "${WORDPRESS_INIT_NO_SYNC_THEMES:-false}" = "true" ]; then
+            echo "Warning: Themes directory is empty, but sync is disabled"
+            return
+        fi
+
+        echo "Themes directory is empty, copying default themes"
+        rsync -a --ignore-existing --progress /usr/src/wordpress/wp-content/themes "${wpContentDir}/"
+        return
+    fi
+}
+main
