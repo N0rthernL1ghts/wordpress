@@ -11,19 +11,13 @@ x-wordpress-configuration-env: &wordpress-configuration-env
   WORDPRESS_DB_HOST: database
   WORDPRESS_CONFIG_EXTRA: |
     define('WP_AUTO_UPDATE_CORE', false);
-    define('WP_SITEURL', 'https://www.example.com');
-    define('WP_HOME', 'https://www.example.com');
+    define('WP_SITEURL', 'http://localhost');
+    define('WP_HOME', 'http://localhost');
     define('WP_CACHE', true);
     define('WP_CACHE_KEY_SALT', 'Wp-');
     define('WP_REDIS_HOST', "cache");
     define('DISABLE_WP_CRON', true);
     $$_SERVER['HTTP_UPGRADE_INSECURE_REQUESTS'] = false;
-    $$_SERVER['HTTP_X_FORWARDED_PORT'] = 443;
-    $$_SERVER['HTTP_X_FORWARDED_SSL'] = 'on';
-    $$_SERVER['HTTPS'] = 'on';
-    $$_SERVER['SERVER_PORT'] = 443;
-    $$_SERVER['REQUEST_SCHEME'] = 'https';
-  # $_SERVER definitions above are set to trick WP that it's accessed over HTTPS. This is typically useful only behind reverse proxy and should be avoided in production
 
 # Required since nginx unit will not pass environment variables s6-envdir loads. wp-config.php has docker_getenv()
 x-wordpress-secrets-files: &wordpress-secrets-files-env
@@ -42,8 +36,8 @@ x-wordpress-init-env: &wordpress-init-env
   WORDPRESS_INIT_ADMIN_USER: admin
   # WORDPRESS_INIT_ADMIN_PASSWORD is defined in secrets
   WORDPRESS_INIT_ADMIN_EMAIL: admin@example.com
-  WORDPRESS_INIT_SITE_TITLE: "Example.com"
-  WORDPRESS_INIT_SITE_URL: "https://www.example.com"
+  WORDPRESS_INIT_SITE_TITLE: "Your Example Site"
+  WORDPRESS_INIT_SITE_URL: "http://localhost"
 
 
 networks:
