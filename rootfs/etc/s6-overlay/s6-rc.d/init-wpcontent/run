@@ -17,7 +17,7 @@ main() {
         fi
 
         echo "Themes directory is empty, copying default themes"
-        rsync -a --ignore-existing --progress /usr/src/wordpress/wp-content/themes "${wpContentDir}/"
+        rsync -a --ignore-existing --stats /usr/src/wordpress/wp-content/themes "${wpContentDir}/"
         return
     fi
 }
