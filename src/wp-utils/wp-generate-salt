@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+main() {
+    src/utils/random-string "${@}"
+}
+main "${@}"

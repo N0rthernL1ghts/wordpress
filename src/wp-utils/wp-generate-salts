@@ -7,7 +7,7 @@ main() {
     mkdir -p "${secretsDir}"
 
     for key in "${keys[@]}"; do
-        value="$(src/utils/random-string 64)"
+        value="$(src/wp-utils/wp-generate-salt 64)"
         secretName="wordpress_${key,,}"
         secretFile="${secretsDir}/${secretName}"
 
