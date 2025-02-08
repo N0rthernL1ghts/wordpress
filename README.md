@@ -58,11 +58,11 @@ ghcr.io/n0rthernl1ghts/wordpress-cron:latest
 
 You can also use specific version of WordPress:
 ```
-ghcr.io/n0rthernl1ghts/wordpress:6.2.0
-ghcr.io/n0rthernl1ghts/wordpress-cron:6.2.0
+ghcr.io/n0rthernl1ghts/wordpress:6.6.2
+ghcr.io/n0rthernl1ghts/wordpress-cron:6.6.2
 ```
 
-Replace version number with desired version, eg. 6.0.2.
+Replace version number with desired version, eg. 6.6.1.
 
 ### Cron
 Cron is supported out of the box in `ghcr.io/n0rthernl1ghts/wordpress` image, but the best practice is to use dedicated image `ghcr.io/n0rthernl1ghts/wordpress-cron` for this purpose. <br/>
@@ -100,7 +100,7 @@ You can extend this image and install plugins during build time, using `wp-plugi
 
 Example:
 ```Dockerfile
-FROM ghcr.io/n0rthernl1ghts/wordpress:6.2.0 AS wp-plugins-installer
+FROM ghcr.io/n0rthernl1ghts/wordpress:6.7.1 AS wp-plugins-installer
 
 RUN set -eux \
     && export WP_PLUGINS_PATH="/var/www/html/wp-content/plugins" \
@@ -109,7 +109,7 @@ RUN set -eux \
     && wp-plugin download wp-mail-smtp
 
 # Final image
-FROM ghcr.io/n0rthernl1ghts/wordpress:6.2.0
+FROM ghcr.io/n0rthernl1ghts/wordpress:6.7.1
 
 # Example: 
 # - Install ext-redis with pecl
