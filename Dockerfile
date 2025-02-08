@@ -45,7 +45,8 @@ RUN set -eux \
     && apk add --update --no-cache rsync \
     && chmod a+x /usr/local/bin/wp \
     && mv "/var/www/html/wp-config-docker.php" "/var/www/html/wp-config.php" \
-    && wp-apply-patch "/etc/wp-mods/wp-admin-update-core.patch" "/var/www/html/wp-admin/update-core.php" "true"
+    && wp-apply-patch "/etc/wp-mods/wp-admin-update-core.patch" "/var/www/html/wp-admin/update-core.php" "true" \
+    && php -l /var/www/html/wp-admin/update-core.php
 
 ARG WP_VERSION
 ARG WP_PATCH_VERSION
