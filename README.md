@@ -44,6 +44,7 @@ Attempt to fix several of WordPress anti-patterns in ready to deploy container
   * Deprecate docker hub images
   * Add WordPress versions 6.5.3 -> 6.6.2
   * Add support for docker secrets
+- 2024-11-02 Add specially optimized WordPress cron image. See docker-compose.yml for usage
 
 #### Public builds (docker)
 
@@ -52,16 +53,23 @@ See: [packages](../../pkgs/container/wordpress)
 You can use public build:
 ```
 ghcr.io/n0rthernl1ghts/wordpress:latest
+ghcr.io/n0rthernl1ghts/wordpress-cron:latest
 ```
 
 You can also use specific version of WordPress:
 ```
 ghcr.io/n0rthernl1ghts/wordpress:6.2.0
+ghcr.io/n0rthernl1ghts/wordpress-cron:6.2.0
 ```
 
 Replace version number with desired version, eg. 6.0.2.
 
-### Automatic plugin installer
+### Cron
+Cron is supported out of the box in `ghcr.io/n0rthernl1ghts/wordpress` image, but the best practice is to use dedicated image `ghcr.io/n0rthernl1ghts/wordpress-cron` for this purpose. <br/>
+This image is optimized for running cron jobs, and is stripped of unnecessary components.
+
+Running cron in the main image is not recommended, as it can cause performance issues, and can lead to unexpected behavior.
+
 ```
 WARNING: This feature is experimental and can fail. Proceed with caution
 ```
