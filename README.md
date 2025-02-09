@@ -132,3 +132,4 @@ COPY --from=wp-plugins-installer ["/var/www/html/wp-content/plugins", "/var/www/
 * ~Apply theme and eventual plugin customizations using patch files~ (Partial)
 * ~Support automatic install using ENV~
 * Create users automatically using ENV
+* Support non-blocking plugin installation
