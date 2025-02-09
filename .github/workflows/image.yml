@@ -2,6 +2,8 @@ name: Build docker WordPress image
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * */7"
   push:
     branches: master
     paths:
