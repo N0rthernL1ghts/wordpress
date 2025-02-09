@@ -1,9 +1,37 @@
-#!/usr/bin/env sh
-set -ex
+#!/usr/bin/env bash
 
-#docker build -t localhost/tests-util build/tests-util
-docker run --init \
-    --rm \
-    -i \
-    -v "${PWD}:/var/www/html" \
-  localhost/tests-util wp-patch-tests
+build_tests_util() {
+    docker build -t "${TESTS_UTIL_IMAGE:?}" build/tests-util
+}
+
+main() {
+    # Use docker BuildKit
+    DOCKER_BUILDKIT=1
+    export DOCKER_BUILDKIT
+
+    TESTS_UTIL_IMAGE="localhost/tests-util:latest"
+    export TESTS_UTIL_IMAGE
+
+    if [ "${1:-}" = "build" ]; then
+        echo "Rebuilding image..."
+        build_tests_util
+    elif ! docker inspect --type=image "${TESTS_UTIL_IMAGE}" > /dev/null 2>&1; then
+        echo "Image does not exist locally. Building..."
+        build_tests_util
+    fi
+
+    local runCommand="wp-patch-tests"
+    if [ "${1:-}" = "shell" ]; then
+        runCommand="/bin/bash"
+    fi
+
+    docker run --init \
+        --rm \
+        --interactive \
+        --volume "./build/tests-util/wp-patch-tests.sh:/usr/local/bin/wp-patch-tests" \
+        --volume "./build/docker-bake.hcl:/data/docker-bake.hcl:ro" \
+        --volume "./patches:/data/patches:ro" \
+        "${TESTS_UTIL_IMAGE}" "${runCommand}"
+}
+
+main "${@}"

@@ -30,7 +30,6 @@ COPY --from=wp-cli ["/usr/local/bin/wp", "/usr/local/bin/wp"]
 # WP patch tests
 COPY --chmod=0777 ["./wp-patch-tests.sh", "/usr/local/bin/wp-patch-tests"]
 
-
 # Build final image
 ARG PHP_VERSION
 ARG WP_VERSION
@@ -38,8 +37,11 @@ FROM --platform=${TARGETPLATFORM} wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-
 
 
 RUN set -eux \
-    && apk add --update --no-cache git patch less \
+    && apk add --update --no-cache gawk git grep patch less \
     && git config --global --add safe.directory /var/www/html \
+    && echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/memory-limit.ini \
     && ln -sf /var/www/composer/vendor/bin/parallel-lint /usr/local/bin/php-parallel-lint
 
 COPY --from=rootfs ["/", "/"]
+
+WORKDIR /data

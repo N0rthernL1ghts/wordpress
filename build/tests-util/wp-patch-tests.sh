@@ -21,14 +21,16 @@ function getFileCount() {
 }
 
 function taskPrepareWpPatch() {
-    local patchDir="${1:?}"
-    local downloadRoot="${2:?}"
+    set -eou pipefail
 
+    local wpLongVersion="${1:?}"
+    local patchDir="${2:?}"
+    local downloadRoot="${3:?}"
 
-    local wpLongVersion
+    # Define variables
     local wpShortVersion
     local downloadPath
-    wpLongVersion="$(basename "${patchDir}")"
+
     wpShortVersion="$(echo "${wpLongVersion}" | sed --expression='s/.0$//g')"
     downloadPath="${downloadRoot}/${wpLongVersion}"
 
@@ -39,9 +41,21 @@ function taskPrepareWpPatch() {
 
     echo "> Applying patch"
     patch "${downloadPath}/wp-admin/update-core.php" <"${patchDir}/wp-admin-update-core.patch"
-    mv -v "${downloadPath}/wp-admin/update-core.php" "${PHP_TESTS_DIR}/update-core-${wpLongVersion}.php"
+    cp -v "${downloadPath}/wp-admin/update-core.php" "${PHP_TESTS_DIR}/update-core-${wpLongVersion}.php"
 
     rm "${downloadPath}" -rf
+}
+
+function extractVersionsFromHCL() {
+    local hclFile="${1:?HCL file path required}"
+
+    gawk '
+        /args *= *get-args/ {
+            if (match($0, /get-args\("([0-9]+\.[0-9]+\.[0-9]+)", *"([0-9]+\.[0-9]+\.[0-9]+)"\)/, arr)) {
+                print arr[1], arr[2];
+            }
+        }
+    ' "${hclFile}"
 }
 
 main() {
@@ -52,20 +66,35 @@ main() {
 
     local patchDir
 
-    # For each patch, download appropriate WP version, apply patch and check if file syntax is correct afterwards
-    for patchDir in patches/*/; do
-        echo "> Deploying task ${patchDir}"
+    local wpLongVersion
+    local wpPatchVersion
+    local expectedPatchCount=0
+
+    declare -a versions
+    mapfile -t versions < <(extractVersionsFromHCL /data/docker-bake.hcl)
+
+    for version in "${versions[@]}"; do
+        wpLongVersion=$(echo "$version" | awk '{print $1}')
+        wpPatchVersion=$(echo "$version" | awk '{print $2}')
+        patchDir="/data/patches/${wpPatchVersion}"
+        printf "Deploying task [Version: %s, Patch: %s, Path: %s]\n" "${wpLongVersion}" "${wpPatchVersion}" "${patchDir}"
 
         # Introduce ~50ms overhead before deploying another task
         # Even shorter overhead helps. but better to be on safe side.
         # This should prevent concurrency issues
         sleep 0.05
 
-        # Run task concurrently
-        taskPrepareWpPatch "${patchDir}" "/data/wp_src" &
+        if [ ! -d "${patchDir}" ]; then
+            printf "Error: Patch directory not found: %s\n" "${patchDir}"
+            return 1
+        fi
+
+        # Start the task in the background and capture the PID
+        taskPrepareWpPatch "${wpLongVersion}" "${patchDir}" "/data/wp_src" &
+        ((expectedPatchCount++))
     done
 
-    echo "Waiting for all tasks to finish..."
+    echo "Waiting for all tasks to complete..."
     wait
 
     # Make sure that directory is not empty
@@ -74,21 +103,23 @@ main() {
         return 1
     fi
 
-    local numberOfPatches
     local numberOfTestFiles
-    numberOfPatches="$(getFileCount patches)"
     numberOfTestFiles="$(getFileCount "${PHP_TESTS_DIR}")"
 
-    if [ "${numberOfPatches}" != "${numberOfTestFiles}" ]; then
+    if [ "${expectedPatchCount}" != "${numberOfTestFiles}" ]; then
         echo "> Error - Unexpected number of files"
-        echo "  Expected: ${numberOfPatches}"
+        echo "  Expected: ${expectedPatchCount}"
         echo "    Actual: ${numberOfTestFiles}"
         return 1
     fi
 
     # Run php-lint on resulting patch files
-    php-parallel-lint "${PHP_TESTS_DIR}" -s --blame --exclude vendor -p php
-    return $?
+    if php-parallel-lint "${PHP_TESTS_DIR}" -s --blame --exclude vendor -p php; then
+        printf "> Success. All of the %d generated patch files were valid.\n" "${expectedPatchCount}"
+        return 0
+    fi
+
+    return 1
 }
 
 main "${@}"
