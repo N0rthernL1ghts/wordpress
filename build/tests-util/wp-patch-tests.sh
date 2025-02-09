@@ -4,23 +4,15 @@
 trap scriptExitHandler EXIT
 
 function scriptExitHandler() {
-    LAST_EXIT_CODE=$?
+    local lastExitCode=$?
 
-    if [ -n "${WP_DL_TEMP_DIR}" ] && [ -d "${WP_DL_TEMP_DIR}" ]; then
-        rm -rf "${WP_DL_TEMP_DIR:?}"
-    fi
-
-    if [ -n "${PHP_TESTS_TEMP_DIR}" ] && [ -d "${PHP_TESTS_TEMP_DIR}" ]; then
-        rm -rf "${PHP_TESTS_TEMP_DIR:?}"
-    fi
-
-    if [ "${LAST_EXIT_CODE}" = "0" ]; then
+    if [ "${lastExitCode}" = "0" ]; then
         echo "> Script finished successfully"
-        exit "${LAST_EXIT_CODE}"
+        exit "${lastExitCode}"
     fi
 
     echo "> Script finished with an error"
-    return "${LAST_EXIT_CODE}"
+    return "${lastExitCode}"
 }
 
 function getFileCount() {
@@ -29,23 +21,34 @@ function getFileCount() {
 }
 
 function taskPrepareWpPatch() {
-    WP_DL_TEMP_DIR="$(mktemp -d -t XXXXXXXXXXX)"
-    PATCH_DIR=${1:?}
+    local patchDir="${1:?}"
+    local downloadRoot="${2:?}"
 
-    WP_WORK_LONG_VERSION="$(basename "${PATCH_DIR}")"
-    WP_WORK_SHORT_VERSION="$(echo "${WP_WORK_LONG_VERSION:?}" | sed --expression='s/.0$//g')"
-    wp --allow-root core download --locale="en_GB" --version="${WP_WORK_SHORT_VERSION}" --path="${WP_DL_TEMP_DIR}"
+
+    local wpLongVersion
+    local wpShortVersion
+    local downloadPath
+    wpLongVersion="$(basename "${patchDir}")"
+    wpShortVersion="$(echo "${wpLongVersion}" | sed --expression='s/.0$//g')"
+    downloadPath="${downloadRoot}/${wpLongVersion}"
+
+    mkdir -p "${downloadPath}"
+
+    # Download WordPress
+    wp --allow-root core download --locale="en_GB" --version="${wpShortVersion}" --path="${downloadPath}"
 
     echo "> Applying patch"
-    patch "${WP_DL_TEMP_DIR}/wp-admin/update-core.php" <"${PATCH_DIR}/wp-admin-update-core.patch"
-    mv -v "${WP_DL_TEMP_DIR}/wp-admin/update-core.php" "${PHP_TESTS_TEMP_DIR}/update-core-${WP_WORK_LONG_VERSION}.php"
+    patch "${downloadPath}/wp-admin/update-core.php" <"${patchDir}/wp-admin-update-core.patch"
+    mv -v "${downloadPath}/wp-admin/update-core.php" "${PHP_TESTS_DIR}/update-core-${wpLongVersion}.php"
 
-    rm "${WP_DL_TEMP_DIR?}" -rf
+    rm "${downloadPath}" -rf
 }
 
 main() {
-    PHP_TESTS_TEMP_DIR="$(mktemp -d -t XXXXXXXXXXX)"
-    export PHP_TESTS_TEMP_DIR
+    PHP_TESTS_DIR="/data/test_files"
+    export PHP_TESTS_DIR
+
+    mkdir -p "${PHP_TESTS_DIR}"
 
     local patchDir
 
@@ -59,14 +62,14 @@ main() {
         sleep 0.05
 
         # Run task concurrently
-        taskPrepareWpPatch "${patchDir}" &
+        taskPrepareWpPatch "${patchDir}" "/data/wp_src" &
     done
 
     echo "Waiting for all tasks to finish..."
     wait
 
     # Make sure that directory is not empty
-    if [ ! "$(ls -A "${PHP_TESTS_TEMP_DIR}")" ]; then
+    if [ ! "$(ls -A "${PHP_TESTS_DIR}")" ]; then
         echo "Error: Target directory is empty"
         return 1
     fi
@@ -74,7 +77,7 @@ main() {
     local numberOfPatches
     local numberOfTestFiles
     numberOfPatches="$(getFileCount patches)"
-    numberOfTestFiles="$(getFileCount "${PHP_TESTS_TEMP_DIR}")"
+    numberOfTestFiles="$(getFileCount "${PHP_TESTS_DIR}")"
 
     if [ "${numberOfPatches}" != "${numberOfTestFiles}" ]; then
         echo "> Error - Unexpected number of files"
@@ -84,7 +87,7 @@ main() {
     fi
 
     # Run php-lint on resulting patch files
-    php-parallel-lint "${PHP_TESTS_TEMP_DIR}" -s --blame --exclude vendor -p php
+    php-parallel-lint "${PHP_TESTS_DIR}" -s --blame --exclude vendor -p php
     return $?
 }
 
