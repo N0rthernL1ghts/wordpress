@@ -1,8 +1,19 @@
 name: Build docker WordPress image
 
 on:
+  workflow_dispatch:
   push:
     branches: master
+    paths:
+      - .github/workflows/image.yml  # This workflow file itself
+      - .dockerignore
+      - Dockerfile
+      - Dockerfile.cron
+      - build/docker-bake.hcl
+      - build/docker-bake-cron.hcl
+      - rootfs/**
+      - src/**
+      - patches/**
 
 jobs:
   build:
