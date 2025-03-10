@@ -70,8 +70,6 @@ main() {
     # This will prepend service name to all output from here
     exec > >(while read -r line; do echo "[init-wpconfig-verify] ${line}"; done) 2>&1
 
-    source /usr/local/bin/load_secrets
-
     echo "Checking salts..."
     if ! checkSaltsEnv; then
         echo "^^^ Some or all of the salts are not set. Cannot continue."
