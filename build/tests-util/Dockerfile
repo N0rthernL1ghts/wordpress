@@ -14,7 +14,7 @@ RUN set -eux \
 
 
 # Build/tag WPCLI
-FROM --platform=${TARGETPLATFORM} wordpress:cli-php${PHP_VERSION} AS wp-cli
+FROM wordpress:cli-php${PHP_VERSION} AS wp-cli
 
 
 
@@ -33,7 +33,7 @@ COPY --chmod=0777 ["./wp-patch-tests.sh", "/usr/local/bin/wp-patch-tests"]
 # Build final image
 ARG PHP_VERSION
 ARG WP_VERSION
-FROM --platform=${TARGETPLATFORM} wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine
+FROM wordpress:${WP_VERSION}-php${PHP_VERSION}-fpm-alpine
 
 
 RUN set -eux \
