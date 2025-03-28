@@ -19,18 +19,6 @@ x-wordpress-configuration-env: &wordpress-configuration-env
     define('DISABLE_WP_CRON', true);
     $$_SERVER['HTTP_UPGRADE_INSECURE_REQUESTS'] = false;
 
-# Required since nginx unit will not pass environment variables s6-envdir loads. wp-config.php has docker_getenv()
-x-wordpress-secrets-files: &wordpress-secrets-files-env
-  WORDPRESS_AUTH_KEY_FILE: /run/secrets/wordpress_auth_key
-  WORDPRESS_SECURE_AUTH_KEY_FILE: /run/secrets/wordpress_secure_auth_key
-  WORDPRESS_LOGGED_IN_KEY_FILE: /run/secrets/wordpress_logged_in_key
-  WORDPRESS_NONCE_KEY_FILE: /run/secrets/wordpress_nonce_key
-  WORDPRESS_AUTH_SALT_FILE: /run/secrets/wordpress_auth_salt
-  WORDPRESS_SECURE_AUTH_SALT_FILE: /run/secrets/wordpress_secure_auth_salt
-  WORDPRESS_LOGGED_IN_SALT_FILE: /run/secrets/wordpress_logged_in_salt
-  WORDPRESS_NONCE_SALT_FILE: /run/secrets/wordpress_nonce_salt
-  WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wordpress_db_password
-
 x-wordpress-init-env: &wordpress-init-env
   WORDPRESS_INIT_ENABLE: "true"
   WORDPRESS_INIT_ADMIN_USER: admin
@@ -93,8 +81,9 @@ services:
       - wordpress_nonce_salt
       - wordpress_init_admin_password
     environment:
-      <<: [ *wordpress-configuration-env, *wordpress-secrets-files-env, *wordpress-init-env ]
+      <<: [ *wordpress-configuration-env, *wordpress-init-env ]
       CRON_ENABLED: "false"
+      # S6_KEEP_ENV: 0 # Uncomment to load secrets to environment
     labels: # This configures traefik - if you have it. You also need to make sure that this service is in the same network with Traefik instance
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(`example.com`)"
