@@ -33,7 +33,6 @@ target "build-platforms" {
 }
 
 target "build-common" {
-  pull = true
 }
 
 variable "REGISTRY_CACHE" {
