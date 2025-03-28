@@ -1,11 +1,15 @@
 # wordpress
 WordPress docker image, powered by s6 supervised nginx unit.
 
-Attempt to fix several of WordPress anti-patterns in ready to deploy container
+Attempt to fix several of WordPress anti-patterns in ready to deploy container.
+
+Native support for docker secrets! Secrets are automatically imported into the container environment.  
+No more need for `_FILE` suffixed environment variables. Still, you're free to use whichever way you want, but using secrets like this is highly encouraged.  
+Please check docker-compose.yml for usage example.
 
 #### Deprecation notice
 - 2023-01-20 Deprecation of WordPress versions prior to 5.9
-  * Preparation for PHP8.1 upgrade. 
+  * Preparation for PHP8.1 upgrade.
   * WordPress versions prior to 5.9 have no PHP8.1 support.
   * PHP8.0 active support has ended since 2022-11-28, therefore skipping this release
   * PHP7.4 reached end-of-life on 2022-11-28 and should not be used.
@@ -111,17 +115,17 @@ RUN set -eux \
 # Final image
 FROM ghcr.io/n0rthernl1ghts/wordpress:6.7.1
 
-# Example: 
+# Example:
 # - Install ext-redis with pecl
 # - Enable ext-redis
 # - Remove pear/pecl cache
-# - Put production-ready php.ini in use 
+# - Put production-ready php.ini in use
 RUN set -eux \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && rm -rf /tmp/pear \
     && cp "${PHP_INI_DIR}/php.ini-production" "${PHP_INI_DIR}/php.ini"
-    
+
 COPY --from=wp-plugins-installer ["/var/www/html/wp-content/plugins", "/var/www/html/wp-content/plugins"]
 ```
 
