@@ -57,12 +57,12 @@ jobs:
           wait-interval: 20
       -
         name: Build and push WordPress Web image
-        uses: docker/bake-action@v6.5.0
+        uses: docker/bake-action@v6.6.0
         with:
           files: build/docker-bake.hcl
           push: true
       - name: Build and push WordPress Cron image
-        uses: docker/bake-action@v6.5.0
+        uses: docker/bake-action@v6.6.0
         with:
           files: build/docker-bake-cron.hcl
           push: true
