@@ -68,11 +68,13 @@ ghcr.io/n0rthernl1ghts/wordpress-cron:6.6.2
 
 Replace version number with desired version, eg. 6.6.1.
 
-### Cron
+#### Cron
 Cron is supported out of the box in `ghcr.io/n0rthernl1ghts/wordpress` image, but the best practice is to use dedicated image `ghcr.io/n0rthernl1ghts/wordpress-cron` for this purpose. <br/>
 This image is optimized for running cron jobs, and is stripped of unnecessary components.
 
 Running cron in the main image is not recommended, as it can cause performance issues, and can lead to unexpected behavior.
+
+#### Plugin installer
 
 ```
 WARNING: This feature is experimental and can fail. Proceed with caution
