@@ -6,7 +6,7 @@ echo "> Downloading WordPress ${WP_VERSION} ..."
 WP_SHORT_VERSION=$(echo "${WP_VERSION}" | sed --expression='s/.0$//g');
 echo "> Short Version: ${WP_SHORT_VERSION}"
 
-wp --allow-root --path="/tmp" core download --locale="${WP_LOCALE}" --version="${WP_SHORT_VERSION}"
+php -d "memory_limit=512M" /usr/local/bin/wp --allow-root --path="/tmp" core download --locale="${WP_LOCALE}" --version="${WP_SHORT_VERSION}"
 
 if [ ! -f "/tmp/wp-admin/update-core.php" ]; then
   echo "X WordPress download failed"
