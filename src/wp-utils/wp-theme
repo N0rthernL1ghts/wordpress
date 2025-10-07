@@ -48,9 +48,14 @@ check() {
     local themeSlug="${1:?check: THEME_SLUG is required}"
     local themePath="${themesDir}/${themeSlug}"
 
-    # Check if theme directory exists
+    # Check if theme directory exists - If it doesn't we know immediately that the theme is not installed
     if [ ! -d "${themePath}" ]; then
         return 1
+    fi
+
+    # Check if theme style.css exists - if yes, theme is probably installed successfully
+    if [ -f "${themePath}/style.css" ]; then
+        return 0
     fi
 
     # Check if theme theme.json exists - if yes, theme is probably installed successfully
