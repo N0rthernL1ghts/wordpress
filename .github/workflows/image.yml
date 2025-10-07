@@ -49,7 +49,7 @@ jobs:
           password: ${{secrets.PAT_TOKEN}}
       -
         name: Await successful tests
-        uses: lewagon/wait-on-check-action@v1.4.0
+        uses: lewagon/wait-on-check-action@v1.4.1
         with:
           ref: ${{ github.sha }}
           check-name: tests
