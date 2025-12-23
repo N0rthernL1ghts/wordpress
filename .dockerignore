@@ -1,0 +1,8 @@
+.git/
+.github/
+.idea/
+wordpress.iml
+data/
+.secrets/
+hack/
+./docker-compose.override.yml
