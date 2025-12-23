@@ -34,8 +34,10 @@ COPY --from=wp-src ["/usr/src/wordpress/wp-content/themes/", "/usr/src/wordpress
 
 
 
-# Stage 3 - Final
-FROM ghcr.io/n0rthernl1ghts/wordpress-unit-base:2.1.0
+#-------------------------------------------------------------------------------------------------------------------
+# STAGE: Build WordPress base
+#-------------------------------------------------------------------------------------------------------------------
+FROM ghcr.io/n0rthernl1ghts/wordpress-unit-base:2.1.0 AS wordpress-base
 
 RUN apk add --update --no-cache patch
 
@@ -63,10 +65,79 @@ VOLUME ["/root/.wp-cli", "/var/www/html/wp-content"]
 LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>" \
       org.opencontainers.image.documentation="https://github.com/N0rthernL1ghts/wordpress/wiki" \
       org.opencontainers.image.source="https://github.com/N0rthernL1ghts/wordpress" \
-      org.opencontainers.image.description="NGINX Unit Powered WordPress ${WP_VERSION} - Build ${TARGETPLATFORM}" \
+      org.opencontainers.image.description="NGINX Unit Powered WordPress ${WP_VERSION}" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.version="${WP_VERSION}"
 
 
 ENTRYPOINT ["/init"]
 EXPOSE 80/TCP
+
+
+
+#-------------------------------------------------------------------------------------------------------------------
+# STAGE: Build WordPress cron
+#-------------------------------------------------------------------------------------------------------------------
+FROM wordpress-base AS wordpress-cron
+
+# Disable all s6 services except for svc-crond, init-docker-secrets and init-wpconfig-verify
+RUN set -eux \
+    && bash -c "rm -rf /etc/s6-overlay/s6-rc.d/{svc-unitd,init-unitd-configure,init-unitd-load-secrets,init-verify-wordpress,init-install-wordpress,init-install-resources,init-webuser-permissions,init-wpcontent} \
+             && rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/{svc-unitd,init-unitd-configure,init-unitd-load-secrets,init-verify-wordpress,init-install-wordpress,init-install-resources,init-webuser-permissions,init-wpcontent} \
+             && rm -rf /etc/s6-overlay/s6-rc.d/svc-crond/dependencies.d/{init-install-wordpress,svc-unitd}"
+
+LABEL org.opencontainers.image.description="NGINX Unit Powered WordPress Cron ${WP_VERSION}"
+
+
+ENV CRON_ENABLED=true
+
+
+
+#-------------------------------------------------------------------------------------------------------------------
+# STAGE: Build WordPress dev
+#-------------------------------------------------------------------------------------------------------------------
+FROM wordpress-base AS wordpress-dev-composer-build
+
+COPY --from=composer:2.7 ["/usr/bin/composer", "/usr/local/bin/composer"]
+
+RUN set -eux \
+    && apk add --update --no-cache git unzip \
+    && export COMPOSER_ALLOW_SUPERUSER=1 \
+    && export COMPOSER_HOME="/tmp/composer" \
+    && composer global require --no-interaction --ignore-platform-reqs \
+        php-parallel-lint/php-console-highlighter \
+        php-parallel-lint/php-parallel-lint \
+        squizlabs/php_codesniffer
+
+
+
+FROM scratch AS wordpress-dev-rootfs
+
+# Install shellcheck
+COPY --from=koalaman/shellcheck:stable ["/bin/shellcheck", "/usr/local/bin/shellcheck"]
+
+# Install shfmt
+COPY --from=mvdan/shfmt:latest ["/bin/shfmt", "/usr/local/bin/shfmt"]
+
+# Install hadolint
+COPY --from=hadolint/hadolint:latest ["/bin/hadolint", "/usr/local/bin/hadolint"]
+
+# Install composer
+COPY --from=wordpress-dev-composer-build ["/usr/local/bin/composer", "/usr/local/bin/"]
+COPY --from=wordpress-dev-composer-build ["/tmp/composer/", "/root/.composer/"]
+
+
+
+FROM wordpress-base AS wordpress-dev
+
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
+
+RUN set -eux \
+    && apk add --update --no-cache curl exa file fish git less nano openssh-client rsync tree unzip wget
+
+COPY --from=wordpress-dev-rootfs ["/", "/"]
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+WORKDIR "/workspace"
+ENTRYPOINT ["/usr/bin/fish"]

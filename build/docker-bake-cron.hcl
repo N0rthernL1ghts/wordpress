@@ -28,7 +28,7 @@ group "default" {
 }
 
 target "build-dockerfile" {
-  dockerfile = "Dockerfile.cron"
+  dockerfile = "Dockerfile"
 }
 
 target "build-platforms" {
@@ -36,7 +36,8 @@ target "build-platforms" {
 }
 
 target "build-common" {
-  pull = true
+  pull   = true
+  target = "wordpress-cron"
 }
 
 variable "REGISTRY_CACHE" {

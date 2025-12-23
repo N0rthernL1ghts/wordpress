@@ -36,7 +36,9 @@ target "build-platforms" {
 }
 
 target "build-common" {
+  target = "wordpress-base"
 }
+
 
 variable "REGISTRY_CACHE" {
   default = "ghcr.io/n0rthernl1ghts/wordpress-cache"
@@ -87,6 +89,7 @@ function "get-tags" {
     ])
   )
 }
+
 
 ##########################
 # Define the build targets
@@ -283,4 +286,5 @@ target "6_8_2" {
   tags       = get-tags("6.8.2", ["6", "6.8", "latest"])
   args       = get-args("6.8.2", "6.5.0")
 }
+
 
