@@ -31,4 +31,4 @@ jobs:
 
       -
         name: "Run tests"
-        run: bin/tests
+        run: hack/scripts/tests
