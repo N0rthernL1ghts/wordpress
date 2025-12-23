@@ -23,7 +23,7 @@ jobs:
         uses: docker/build-push-action@v6
         id: build
         with:
-          context: build/tests-util/
+          context: hack/tests-util/
           cache-from: type=gha,scope=tests
           cache-to: type=gha,scope=tests,mode=max
           load: true

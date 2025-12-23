@@ -19,7 +19,7 @@ updates:
 
   # Maintain Docker image dependencies for patch-util (build)
   - package-ecosystem: "docker"
-    directory: "/build/patch-util"
+    directory: "/hack/patch-util"
     schedule:
       interval: "weekly"
     assignees:
@@ -27,7 +27,7 @@ updates:
 
   # Maintain Docker image dependencies for tests-util (build)
   - package-ecosystem: "docker"
-    directory: "/build/tests-util"
+    directory: "/hack/tests-util"
     schedule:
       interval: "weekly"
     assignees:

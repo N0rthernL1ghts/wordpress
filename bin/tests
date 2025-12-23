@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 build_tests_util() {
-    docker build -t "${TESTS_UTIL_IMAGE:?}" build/tests-util
+    docker build -t "${TESTS_UTIL_IMAGE:?}" ./hack/tests-util
 }
 
 main() {
@@ -28,8 +28,8 @@ main() {
     docker run --init \
         --rm \
         --interactive \
-        --volume "./build/tests-util/wp-patch-tests.sh:/usr/local/bin/wp-patch-tests" \
-        --volume "./build/docker-bake.hcl:/data/docker-bake.hcl:ro" \
+        --volume "./hack/tests-util/wp-patch-tests.sh:/usr/local/bin/wp-patch-tests" \
+        --volume "./hack/docker-bake.hcl:/data/docker-bake.hcl:ro" \
         --volume "./patches:/data/patches:ro" \
         "${TESTS_UTIL_IMAGE}" "${runCommand}"
 }

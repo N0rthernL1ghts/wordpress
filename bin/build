@@ -5,8 +5,8 @@ main() {
     echo "Press Ctrl+C to cancel. Automatically continuing in 5 seconds..."
     sleep 5
 
-    docker buildx bake --file build/docker-bake.hcl --pull "${@}" &
-    docker buildx bake --file build/docker-bake-cron.hcl --pull "${@}" &
+    docker buildx bake --file hack/docker-bake.hcl --pull "${@}" &
+    docker buildx bake --file hack/docker-bake-cron.hcl --pull "${@}" &
     wait
 }
 

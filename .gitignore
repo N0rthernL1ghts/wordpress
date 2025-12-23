@@ -2,7 +2,7 @@
 wordpress.iml
 data/
 .secrets/
-build/patch-util/wp-src/
-build/tests-util/composer.lock
-build/tests-util/vendor/
+hack/patch-util/wp-src/
+hack/tests-util/composer.lock
+hack/tests-util/vendor/
 ./docker-compose.override.yml
