@@ -2,168 +2,21 @@ group "default" {
   targets = ["web", "cron"]
 }
 
-group "web" {
-  targets = [
-    "web_6_5_0",
-    "web_6_5_2",
-    "web_6_5_3",
-    "web_6_5_4",
-    "web_6_5_5",
-    "web_6_6_0",
-    "web_6_6_1",
-    "web_6_6_2",
-    "web_6_7_0",
-    "web_6_7_1",
-    "web_6_7_2",
-    "web_6_8_0",
-    "web_6_8_1",
-    "web_6_8_2"
-  ]
-}
-
-target "build-common" {
-  target = "wordpress-base"
-}
-
-# Get the arguments for the build
-function "get-web-args" {
-  params = [version, patch_version]
-  result = {
-    WP_VERSION = version
-    WP_PATCH_VERSION = patch_version
+target "web" {
+  name = "web_${replace(version, ".", "_")}"
+  matrix = {
+    version = keys(WP_VERSIONS)
   }
-}
-
-# Get list of image tags and registries
-# Takes a version and a list of extra versions to tag
-# eg. get-web-tags("6.2.0", ["6", "6.2", "latest"])
-function "get-web-tags" {
-  params = [version, extra_versions]
-  result = concat(
-    [
-      "ghcr.io/n0rthernl1ghts/wordpress:${version}"
-    ],
-    flatten([
-      for extra_version in extra_versions : [
-        "ghcr.io/n0rthernl1ghts/wordpress:${extra_version}"
-      ]
-    ])
-  )
-}
-
-
-##########################
-# Define the build targets
-##########################
-
-target "web_6_5_0" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.5.0")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.5.0")
-  tags       = get-web-tags("6.5.0", [])
-  args       = get-web-args("6.5.0", "6.5.0")
-}
-
-target "web_6_5_2" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.5.2")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.5.2")
-  tags       = get-web-tags("6.5.2", [])
-  args       = get-web-args("6.5.2", "6.5.0")
-}
-
-target "web_6_5_3" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.5.3")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.5.3")
-  tags       = get-web-tags("6.5.3", [])
-  args       = get-web-args("6.5.3", "6.5.0")
-}
-
-target "web_6_5_4" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.5.4")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.5.4")
-  tags       = get-web-tags("6.5.4", [])
-  args       = get-web-args("6.5.4", "6.5.0")
-}
-
-target "web_6_5_5" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.5.5")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.5.5")
-  tags       = get-web-tags("6.5.5", ["6.5"])
-  args       = get-web-args("6.5.5", "6.5.0")
-}
-
-target "web_6_6_0" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.6.0")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.6.0")
-  tags       = get-web-tags("6.6.0", [])
-  args       = get-web-args("6.6.0", "6.5.0")
-}
-
-target "web_6_6_1" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.6.1")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.6.1")
-  tags       = get-web-tags("6.6.1", [])
-  args       = get-web-args("6.6.1", "6.5.0")
-}
-
-target "web_6_6_2" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.6.2")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.6.2")
-  tags       = get-web-tags("6.6.2", ["6.6"])
-  args       = get-web-args("6.6.2", "6.5.0")
-}
-
-target "web_6_7_0" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.7.0")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.7.0")
-  tags       = get-web-tags("6.7.0", [])
-  args       = get-web-args("6.7.0", "6.5.0")
-}
-
-target "web_6_7_1" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.7.1")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.7.1")
-  tags       = get-web-tags("6.7.1", [])
-  args       = get-web-args("6.7.1", "6.5.0")
-}
-
-target "web_6_7_2" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.7.2")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.7.2")
-  tags       = get-web-tags("6.7.2", ["6.7"])
-  args       = get-web-args("6.7.2", "6.5.0")
-}
-
-target "web_6_8_0" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.8.0")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.8.0")
-  tags       = get-web-tags("6.8.0", [])
-  args       = get-web-args("6.8.0", "6.5.0")
-}
-
-target "web_6_8_1" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.8.1")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.8.1")
-  tags       = get-web-tags("6.8.1", [])
-  args       = get-web-args("6.8.1", "6.5.0")
-}
-
-target "web_6_8_2" {
-  inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from(REGISTRY_CACHE_WEB, "6.8.2")
-  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, "6.8.2")
-  tags       = get-web-tags("6.8.2", ["6", "6.8", "latest"])
-  args       = get-web-args("6.8.2", "6.5.0")
+  inherits = ["build-dockerfile", "build-platforms"]
+  target = "wordpress-base"
+  
+  args = {
+    WP_VERSION = version
+    WP_PATCH_VERSION = WP_VERSIONS[version].patch_version
+  }
+  
+  tags = get-tags("ghcr.io/n0rthernl1ghts/wordpress", version, WP_VERSIONS[version].extra_tags)
+  
+  cache-from = get-cache-from(REGISTRY_CACHE_WEB, version)
+  cache-to   = get-cache-to(REGISTRY_CACHE_WEB, version)
 }

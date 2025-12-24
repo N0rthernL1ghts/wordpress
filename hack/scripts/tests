@@ -29,7 +29,7 @@ main() {
         --rm \
         --interactive \
         --volume "./hack/tests-util/wp-patch-tests.sh:/usr/local/bin/wp-patch-tests" \
-        --volume "./hack/docker-bake-web.hcl:/data/docker-bake-web.hcl:ro" \
+        --volume "./hack/docker-bake-common.hcl:/data/docker-bake-common.hcl:ro" \
         --volume "./patches:/data/patches:ro" \
         "${TESTS_UTIL_IMAGE}" "${runCommand}"
 }
