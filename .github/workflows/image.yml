@@ -49,6 +49,17 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.PAT_TOKEN}}
       -
+        name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main # TODO: Temporary. Will be replaced with a fork
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: false
+          swap-storage: true
+      -
         name: Await successful tests
         uses: lewagon/wait-on-check-action@v1.4.1
         with:
