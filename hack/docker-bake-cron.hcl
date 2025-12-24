@@ -39,7 +39,7 @@ variable "REGISTRY_CACHE" {
 ######################
 
 # Get the arguments for the build
-function "get-args" {
+function "get-cron-args" {
   params = [version]
   result = {
     WP_VERSION = version
@@ -47,7 +47,7 @@ function "get-args" {
 }
 
 # Get the cache-from configuration
-function "get-cache-from" {
+function "get-cron-cache-from" {
   params = [version]
   result = [
     "type=registry,ref=${REGISTRY_CACHE}:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}",
@@ -56,7 +56,7 @@ function "get-cache-from" {
 }
 
 # Get the cache-to configuration
-function "get-cache-to" {
+function "get-cron-cache-to" {
   params = [version]
   result = [
     "type=registry,mode=max,ref=${REGISTRY_CACHE}:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}",
@@ -66,8 +66,8 @@ function "get-cache-to" {
 
 # Get list of image tags and registries
 # Takes a version and a list of extra versions to tag
-# eg. get-tags("6.2.0", ["6", "6.2", "latest"])
-function "get-tags" {
+# eg. get-cron-tags("6.2.0", ["6", "6.2", "latest"])
+function "get-cron-tags" {
   params = [version, extra_versions]
   result = concat(
     [
@@ -87,112 +87,112 @@ function "get-tags" {
 
 target "6_5_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.5.0")
-  cache-to   = get-cache-to("6.5.0")
-  tags       = get-tags("6.5.0", [])
-  args       = get-args("6.5.0")
+  cache-from = get-cron-cache-from("6.5.0")
+  cache-to   = get-cron-cache-to("6.5.0")
+  tags       = get-cron-tags("6.5.0", [])
+  args       = get-cron-args("6.5.0")
 }
 
 target "6_5_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.5.2")
-  cache-to   = get-cache-to("6.5.2")
-  tags       = get-tags("6.5.2", [])
-  args       = get-args("6.5.2")
+  cache-from = get-cron-cache-from("6.5.2")
+  cache-to   = get-cron-cache-to("6.5.2")
+  tags       = get-cron-tags("6.5.2", [])
+  args       = get-cron-args("6.5.2")
 }
 
 target "6_5_3" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.5.3")
-  cache-to   = get-cache-to("6.5.3")
-  tags       = get-tags("6.5.3", [])
-  args       = get-args("6.5.3")
+  cache-from = get-cron-cache-from("6.5.3")
+  cache-to   = get-cron-cache-to("6.5.3")
+  tags       = get-cron-tags("6.5.3", [])
+  args       = get-cron-args("6.5.3")
 }
 
 target "6_5_4" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.5.4")
-  cache-to   = get-cache-to("6.5.4")
-  tags       = get-tags("6.5.4", [])
-  args       = get-args("6.5.4")
+  cache-from = get-cron-cache-from("6.5.4")
+  cache-to   = get-cron-cache-to("6.5.4")
+  tags       = get-cron-tags("6.5.4", [])
+  args       = get-cron-args("6.5.4")
 }
 
 target "6_5_5" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.5.5")
-  cache-to   = get-cache-to("6.5.5")
-  tags       = get-tags("6.5.5", ["6.5"])
-  args       = get-args("6.5.5")
+  cache-from = get-cron-cache-from("6.5.5")
+  cache-to   = get-cron-cache-to("6.5.5")
+  tags       = get-cron-tags("6.5.5", ["6.5"])
+  args       = get-cron-args("6.5.5")
 }
 
 target "6_6_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.6.0")
-  cache-to   = get-cache-to("6.6.0")
-  tags       = get-tags("6.6.0", [])
-  args       = get-args("6.6.0")
+  cache-from = get-cron-cache-from("6.6.0")
+  cache-to   = get-cron-cache-to("6.6.0")
+  tags       = get-cron-tags("6.6.0", [])
+  args       = get-cron-args("6.6.0")
 }
 
 target "6_6_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.6.1")
-  cache-to   = get-cache-to("6.6.1")
-  tags       = get-tags("6.6.1", [])
-  args       = get-args("6.6.1")
+  cache-from = get-cron-cache-from("6.6.1")
+  cache-to   = get-cron-cache-to("6.6.1")
+  tags       = get-cron-tags("6.6.1", [])
+  args       = get-cron-args("6.6.1")
 }
 
 target "6_6_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.6.2")
-  cache-to   = get-cache-to("6.6.2")
-  tags       = get-tags("6.6.2", ["6.6"])
-  args       = get-args("6.6.2")
+  cache-from = get-cron-cache-from("6.6.2")
+  cache-to   = get-cron-cache-to("6.6.2")
+  tags       = get-cron-tags("6.6.2", ["6.6"])
+  args       = get-cron-args("6.6.2")
 }
 
 target "6_7_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.7.0")
-  cache-to   = get-cache-to("6.7.0")
-  tags       = get-tags("6.7.0", [])
-  args       = get-args("6.7.0")
+  cache-from = get-cron-cache-from("6.7.0")
+  cache-to   = get-cron-cache-to("6.7.0")
+  tags       = get-cron-tags("6.7.0", [])
+  args       = get-cron-args("6.7.0")
 }
 
 target "6_7_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.7.1")
-  cache-to   = get-cache-to("6.7.1")
-  tags       = get-tags("6.7.1", [])
-  args       = get-args("6.7.1")
+  cache-from = get-cron-cache-from("6.7.1")
+  cache-to   = get-cron-cache-to("6.7.1")
+  tags       = get-cron-tags("6.7.1", [])
+  args       = get-cron-args("6.7.1")
 }
 
 target "6_7_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.7.2")
-  cache-to   = get-cache-to("6.7.2")
-  tags       = get-tags("6.7.2", ["6.7"])
-  args       = get-args("6.7.2")
+  cache-from = get-cron-cache-from("6.7.2")
+  cache-to   = get-cron-cache-to("6.7.2")
+  tags       = get-cron-tags("6.7.2", ["6.7"])
+  args       = get-cron-args("6.7.2")
 }
 
 target "6_8_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.8.0")
-  cache-to   = get-cache-to("6.8.0")
-  tags       = get-tags("6.8.0", [])
-  args       = get-args("6.8.0")
+  cache-from = get-cron-cache-from("6.8.0")
+  cache-to   = get-cron-cache-to("6.8.0")
+  tags       = get-cron-tags("6.8.0", [])
+  args       = get-cron-args("6.8.0")
 }
 
 target "6_8_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.8.1")
-  cache-to   = get-cache-to("6.8.1")
-  tags       = get-tags("6.8.1", [])
-  args       = get-args("6.8.1")
+  cache-from = get-cron-cache-from("6.8.1")
+  cache-to   = get-cron-cache-to("6.8.1")
+  tags       = get-cron-tags("6.8.1", [])
+  args       = get-cron-args("6.8.1")
 }
 
 target "6_8_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
-  cache-from = get-cache-from("6.8.2")
-  cache-to   = get-cache-to("6.8.2")
-  tags       = get-tags("6.8.2", ["6", "6.8", "latest"])
-  args       = get-args("6.8.2")
+  cache-from = get-cron-cache-from("6.8.2")
+  cache-to   = get-cron-cache-to("6.8.2")
+  tags       = get-cron-tags("6.8.2", ["6", "6.8", "latest"])
+  args       = get-cron-args("6.8.2")
 }
