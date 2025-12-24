@@ -71,7 +71,7 @@ LABEL maintainer="Aleksandar Puharic <aleksandar@puharic.com>" \
 
 
 ENTRYPOINT ["/init"]
-EXPOSE 80/TCP
+EXPOSE 80/tcp
 
 
 
