@@ -50,8 +50,8 @@ function extractVersionsFromHCL() {
     local hclFile="${1:?HCL file path required}"
 
     gawk '
-        /args *= *get-args/ {
-            if (match($0, /get-args\("([0-9]+\.[0-9]+\.[0-9]+)", *"([0-9]+\.[0-9]+\.[0-9]+)"\)/, arr)) {
+        /args *= *get-web-args/ {
+            if (match($0, /get-web-args\("([0-9]+\.[0-9]+\.[0-9]+)", *"([0-9]+\.[0-9]+\.[0-9]+)"\)/, arr)) {
                 print arr[1], arr[2];
             }
         }
@@ -71,7 +71,7 @@ main() {
     local expectedPatchCount=0
 
     declare -a versions
-    mapfile -t versions < <(extractVersionsFromHCL /data/docker-bake.hcl)
+    mapfile -t versions < <(extractVersionsFromHCL /data/docker-bake-web.hcl)
 
     for version in "${versions[@]}"; do
         wpLongVersion=$(echo "$version" | awk '{print $1}')
