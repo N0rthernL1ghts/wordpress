@@ -50,7 +50,7 @@ jobs:
           password: ${{secrets.PAT_TOKEN}}
       -
         name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main # TODO: Temporary. Will be replaced with a fork
+        uses: BRAINSia/free-disk-space@v2.1.2
         with:
           tool-cache: false
           android: true
