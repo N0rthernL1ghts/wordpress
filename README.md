@@ -49,6 +49,10 @@ Please check docker-compose.yml for usage example.
   * Add WordPress versions 6.5.3 -> 6.6.2
   * Add support for docker secrets
 - 2024-11-02 Add specially optimized WordPress cron image. See docker-compose.yml for usage
+- 2025-12-25 Deprecation of WordPress versions prior to 6.5
+  * Old images will remain, but will receive no further updates, until their eventual removal. Usage is discouraged.
+  * This will make build stack lighter and help work around limitations of GH hosted runners.
+  * If you still need support for older versions, reach out by opening new issue and we can see if something can be arranged
 
 #### Public builds (docker)
 
