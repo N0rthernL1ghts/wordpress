@@ -1,19 +1,19 @@
 group "cron" {
   targets = [
-    "6_5_0",
-    "6_5_2",
-    "6_5_3",
-    "6_5_4",
-    "6_5_5",
-    "6_6_0",
-    "6_6_1",
-    "6_6_2",
-    "6_7_0",
-    "6_7_1",
-    "6_7_2",
-    "6_8_0",
-    "6_8_1",
-    "6_8_2"
+    "cron_6_5_0",
+    "cron_6_5_2",
+    "cron_6_5_3",
+    "cron_6_5_4",
+    "cron_6_5_5",
+    "cron_6_6_0",
+    "cron_6_6_1",
+    "cron_6_6_2",
+    "cron_6_7_0",
+    "cron_6_7_1",
+    "cron_6_7_2",
+    "cron_6_8_0",
+    "cron_6_8_1",
+    "cron_6_8_2"
   ]
 }
 
@@ -85,7 +85,7 @@ function "get-cron-tags" {
 # Define the build targets
 ##########################
 
-target "6_5_0" {
+target "cron_6_5_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.5.0")
   cache-to   = get-cron-cache-to("6.5.0")
@@ -93,7 +93,7 @@ target "6_5_0" {
   args       = get-cron-args("6.5.0")
 }
 
-target "6_5_2" {
+target "cron_6_5_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.5.2")
   cache-to   = get-cron-cache-to("6.5.2")
@@ -101,7 +101,7 @@ target "6_5_2" {
   args       = get-cron-args("6.5.2")
 }
 
-target "6_5_3" {
+target "cron_6_5_3" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.5.3")
   cache-to   = get-cron-cache-to("6.5.3")
@@ -109,7 +109,7 @@ target "6_5_3" {
   args       = get-cron-args("6.5.3")
 }
 
-target "6_5_4" {
+target "cron_6_5_4" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.5.4")
   cache-to   = get-cron-cache-to("6.5.4")
@@ -117,7 +117,7 @@ target "6_5_4" {
   args       = get-cron-args("6.5.4")
 }
 
-target "6_5_5" {
+target "cron_6_5_5" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.5.5")
   cache-to   = get-cron-cache-to("6.5.5")
@@ -125,7 +125,7 @@ target "6_5_5" {
   args       = get-cron-args("6.5.5")
 }
 
-target "6_6_0" {
+target "cron_6_6_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.6.0")
   cache-to   = get-cron-cache-to("6.6.0")
@@ -133,7 +133,7 @@ target "6_6_0" {
   args       = get-cron-args("6.6.0")
 }
 
-target "6_6_1" {
+target "cron_6_6_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.6.1")
   cache-to   = get-cron-cache-to("6.6.1")
@@ -141,7 +141,7 @@ target "6_6_1" {
   args       = get-cron-args("6.6.1")
 }
 
-target "6_6_2" {
+target "cron_6_6_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.6.2")
   cache-to   = get-cron-cache-to("6.6.2")
@@ -149,7 +149,7 @@ target "6_6_2" {
   args       = get-cron-args("6.6.2")
 }
 
-target "6_7_0" {
+target "cron_6_7_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.7.0")
   cache-to   = get-cron-cache-to("6.7.0")
@@ -157,7 +157,7 @@ target "6_7_0" {
   args       = get-cron-args("6.7.0")
 }
 
-target "6_7_1" {
+target "cron_6_7_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.7.1")
   cache-to   = get-cron-cache-to("6.7.1")
@@ -165,7 +165,7 @@ target "6_7_1" {
   args       = get-cron-args("6.7.1")
 }
 
-target "6_7_2" {
+target "cron_6_7_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.7.2")
   cache-to   = get-cron-cache-to("6.7.2")
@@ -173,7 +173,7 @@ target "6_7_2" {
   args       = get-cron-args("6.7.2")
 }
 
-target "6_8_0" {
+target "cron_6_8_0" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.8.0")
   cache-to   = get-cron-cache-to("6.8.0")
@@ -181,7 +181,7 @@ target "6_8_0" {
   args       = get-cron-args("6.8.0")
 }
 
-target "6_8_1" {
+target "cron_6_8_1" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.8.1")
   cache-to   = get-cron-cache-to("6.8.1")
@@ -189,7 +189,7 @@ target "6_8_1" {
   args       = get-cron-args("6.8.1")
 }
 
-target "6_8_2" {
+target "cron_6_8_2" {
   inherits   = ["build-dockerfile", "build-platforms", "build-common"]
   cache-from = get-cron-cache-from("6.8.2")
   cache-to   = get-cron-cache-to("6.8.2")
