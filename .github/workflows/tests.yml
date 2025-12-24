@@ -32,8 +32,8 @@ jobs:
         id: build
         with:
           context: hack/tests-util/
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/wordpress-tests-util-cache:main
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/wordpress-tests-util-cache:main,mode=max
+          cache-from: type=registry,ref=ghcr.io/n0rthernl1ghts/wordpress-tests-util-cache:main
+          cache-to: type=registry,ref=ghcr.io/n0rthernl1ghts/wordpress-tests-util-cache:main,mode=max
           load: true
           tags: localhost/tests-util:latest
 
