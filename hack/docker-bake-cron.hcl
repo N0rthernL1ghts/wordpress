@@ -1,4 +1,4 @@
-group "default" {
+group "cron" {
   targets = [
     "6_5_0",
     "6_5_2",

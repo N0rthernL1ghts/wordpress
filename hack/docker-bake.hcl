@@ -1,4 +1,8 @@
 group "default" {
+  targets = ["web", "cron"]
+}
+
+group "web" {
   targets = [
     "6_5_0",
     "6_5_2",
