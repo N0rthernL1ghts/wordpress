@@ -50,7 +50,8 @@ function "get-args" {
 function "get-cache-from" {
   params = [version]
   result = [
-    "type=registry,ref=${REGISTRY_CACHE}:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}"
+    "type=registry,ref=${REGISTRY_CACHE}:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}",
+    "type=registry,ref=${REGISTRY_CACHE}:${sha1("main-${BAKE_LOCAL_PLATFORM}")}"
   ]
 }
 
@@ -58,7 +59,8 @@ function "get-cache-from" {
 function "get-cache-to" {
   params = [version]
   result = [
-    "type=registry,mode=max,ref=${REGISTRY_CACHE}:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}"
+    "type=registry,mode=max,ref=${REGISTRY_CACHE}:${sha1("${version}-${BAKE_LOCAL_PLATFORM}")}",
+    "type=registry,mode=max,ref=${REGISTRY_CACHE}:${sha1("main-${BAKE_LOCAL_PLATFORM}")}"
   ]
 }
 

@@ -56,13 +56,10 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 20
       -
-        name: Build and push WordPress Web image
+        name: Build and push images
         uses: docker/bake-action@v6.10.0
         with:
-          files: hack/docker-bake.hcl
-          push: true
-      - name: Build and push WordPress Cron image
-        uses: docker/bake-action@v6.10.0
-        with:
-          files: hack/docker-bake-cron.hcl
+          files: |
+            hack/docker-bake.hcl
+            hack/docker-bake-cron.hcl
           push: true
