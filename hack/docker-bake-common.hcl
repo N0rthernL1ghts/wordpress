@@ -23,7 +23,9 @@ variable "WP_VERSIONS" {
     "6.7.2" = { patch_version = "6.5.0", extra_tags = ["6.7"] }
     "6.8.0" = { patch_version = "6.5.0", extra_tags = [] }
     "6.8.1" = { patch_version = "6.5.0", extra_tags = [] }
-    "6.8.2" = { patch_version = "6.5.0", extra_tags = ["6", "6.8", "latest"] }
+    "6.8.2" = { patch_version = "6.5.0", extra_tags = [] }
+    "6.8.3" = { patch_version = "6.5.0", extra_tags = ["6.8"] }
+    "6.9.0" = { patch_version = "6.5.0", extra_tags = ["6", "6.9", "latest"] }
   }
 }
 
