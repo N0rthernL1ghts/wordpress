@@ -10,11 +10,6 @@ variable "REGISTRY_CACHE_CRON" {
 
 variable "WP_VERSIONS" {
   default = {
-    "6.5.0" = { patch_version = "6.5.0", extra_tags = [] }
-    "6.5.2" = { patch_version = "6.5.0", extra_tags = [] }
-    "6.5.3" = { patch_version = "6.5.0", extra_tags = [] }
-    "6.5.4" = { patch_version = "6.5.0", extra_tags = [] }
-    "6.5.5" = { patch_version = "6.5.0", extra_tags = ["6.5"] }
     "6.6.0" = { patch_version = "6.5.0", extra_tags = [] }
     "6.6.1" = { patch_version = "6.5.0", extra_tags = [] }
     "6.6.2" = { patch_version = "6.5.0", extra_tags = ["6.6"] }
