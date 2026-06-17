@@ -55,6 +55,7 @@ Please check docker-compose.yml for usage example.
   * If you still need support for older versions, reach out by opening new issue and we can see if something can be arranged
 - 2026-06-16 Dropping support for PHP 8.1 and defaulting to PHP 8.2. Deprecation of WordPress versions prior to 6.6.x
   * Old images will remain, but will receive no further updates, until their eventual removal. Usage is discouraged.
+  * Support for versions prior to 6.5 is now completely removed and images will no longer work, until their eventual removal.
 
 #### Public builds (docker)
 
