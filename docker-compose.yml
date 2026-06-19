@@ -60,7 +60,7 @@ secrets:
 
 services:
   wordpress:
-    image: ghcr.io/n0rthernl1ghts/wordpress:6.7.1
+    image: ghcr.io/n0rthernl1ghts/wordpress:6.9.4
     deploy:
       restart_policy:
         condition: any
@@ -102,7 +102,7 @@ services:
   cron:
     extends:
       service: wordpress
-    image: ghcr.io/n0rthernl1ghts/wordpress-cron:6.7.1
+    image: ghcr.io/n0rthernl1ghts/wordpress-cron:6.9.4
     deploy:
       resources:
         limits:
