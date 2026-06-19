@@ -37,7 +37,7 @@ COPY --from=wp-src ["/usr/src/wordpress/wp-content/themes/", "/usr/src/wordpress
 #-------------------------------------------------------------------------------------------------------------------
 # STAGE: Build WordPress base
 #-------------------------------------------------------------------------------------------------------------------
-FROM ghcr.io/n0rthernl1ghts/wordpress-unit-base:2.1.0 AS wordpress-base
+FROM ghcr.io/n0rthernl1ghts/wordpress-unit-base:3.0.0 AS wordpress-base
 
 RUN apk add --update --no-cache patch
 
