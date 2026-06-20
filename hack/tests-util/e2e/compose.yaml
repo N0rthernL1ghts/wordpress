@@ -1,0 +1,122 @@
+x-wordpress-configuration-env: &wordpress-configuration-env
+  WORDPRESS_PLUGIN_LIST: "maintenance redis-cache"
+  WORDPRESS_REDIS_HOST: redis
+  WORDPRESS_CACHE: 1
+  WORDPRESS_CACHE_KEY_SALT: 'Wp-'
+  WORDPRESS_TABLE_PREFIX: 'wp_'
+  WORDPRESS_DEBUG: 1
+  DEFAULT_EMAIL: "webmaster@example.com"
+  WORDPRESS_DB_USER: wordpress
+  WORDPRESS_DB_NAME: wordpress
+  WORDPRESS_DB_HOST: database
+  WORDPRESS_CONFIG_EXTRA: |
+    define('WP_AUTO_UPDATE_CORE', false);
+    define('WP_SITEURL', 'http://localhost:8080');
+    define('WP_HOME', 'http://localhost:8080');
+    define('WP_CACHE', true);
+    define('WP_CACHE_KEY_SALT', 'Wp-');
+    define('WP_REDIS_HOST', "cache");
+    define('DISABLE_WP_CRON', true);
+    $$_SERVER['HTTP_UPGRADE_INSECURE_REQUESTS'] = false;
+
+x-wordpress-init-env: &wordpress-init-env
+  WORDPRESS_INIT_ENABLE: "true"
+  WORDPRESS_INIT_ADMIN_USER: admin
+  WORDPRESS_INIT_ADMIN_EMAIL: admin@example.com
+  WORDPRESS_INIT_SITE_TITLE: "WordPress Test Site"
+  WORDPRESS_INIT_SITE_URL: "http://localhost:8080"
+
+secrets:
+  database_root_password:
+    file: ./.secrets/database_root_password.txt
+  wordpress_database_password:
+    file: ./.secrets/wordpress_database_password.txt
+  wordpress_db_password:
+    file: ./.secrets/wordpress_database_password.txt
+  wordpress_auth_key:
+    file: ./.secrets/wordpress_auth_key
+  wordpress_secure_auth_key:
+    file: ./.secrets/wordpress_secure_auth_key
+  wordpress_logged_in_key:
+    file: ./.secrets/wordpress_logged_in_key
+  wordpress_nonce_key:
+    file: ./.secrets/wordpress_nonce_key
+  wordpress_auth_salt:
+    file: ./.secrets/wordpress_auth_salt
+  wordpress_secure_auth_salt:
+    file: ./.secrets/wordpress_secure_auth_salt
+  wordpress_logged_in_salt:
+    file: ./.secrets/wordpress_logged_in_salt
+  wordpress_nonce_salt:
+    file: ./.secrets/wordpress_nonce_salt
+  wordpress_init_admin_password:
+    file: ./.secrets/wordpress_init_admin_password
+
+volumes:
+  wp-data:
+  db-config:
+  db-data:
+
+services:
+  wordpress:
+    image: ${WORDPRESS_TEST_IMAGE}
+    ports:
+      - "127.0.0.1:8080:80"
+    secrets:
+      - wordpress_db_password
+      - wordpress_auth_key
+      - wordpress_secure_auth_key
+      - wordpress_logged_in_key
+      - wordpress_nonce_key
+      - wordpress_auth_salt
+      - wordpress_secure_auth_salt
+      - wordpress_logged_in_salt
+      - wordpress_nonce_salt
+      - wordpress_init_admin_password
+    environment:
+      <<: [ *wordpress-configuration-env, *wordpress-init-env ]
+      CRON_ENABLED: "false"
+      S6_KEEP_ENV: 0
+    volumes:
+      - wp-data:/var/www/html/wp-content
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "/usr/local/bin/healthcheck", "true" ]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  cache:
+    image: redis:alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+
+  database:
+    image: 'ghcr.io/n0rthernl1ghts/mariadb:10.11'
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    environment:
+      PUID: 1000
+      PGID: 1000
+      MARIADB_INIT_DATABASES: wordpress
+      MARIADB_INIT_USERS: wordpress
+      FILE__MARIADB_ROOT_PASSWORD: /run/secrets/database_root_password
+      FILE__MARIADB_USER_WORDPRESS_PASSWORD: /run/secrets/wordpress_database_password
+      FILE__MARIADB_USER_wordpress_PASSWORD: /run/secrets/wordpress_database_password
+      FORCE_CONFIG_OVERWRITE: 1
+    volumes:
+      - db-config:/config
+      - db-data:/var/lib/mysql
+    secrets:
+      - database_root_password
+      - wordpress_database_password

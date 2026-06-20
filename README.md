@@ -138,6 +138,33 @@ RUN set -eux \
 COPY --from=wp-plugins-installer ["/var/www/html/wp-content/plugins", "/var/www/html/wp-content/plugins"]
 ```
 
+### Deployment and Integration Testing
+The project includes automated integration tests that deploy specific WordPress version stacks, check the initialization flow, and verify page response and integrity.
+
+To run the tests:
+1. Ensure Docker and Docker Compose are installed.
+2. Run the test script from the repository root:
+   ```bash
+   ./hack/tests-util/End_to_End/run.sh
+   ```
+
+By default, the script reads all configured versions from [hack/docker-bake-common.hcl](file:///home/xzero/workspace/private/OSS/wordpress/hack/docker-bake-common.hcl) and tests them sequentially by pulling from GHCR.
+
+You can also specify a subset of versions to test:
+```bash
+./hack/tests-util/End_to_End/run.sh 6.9.4 6.6.2
+```
+
+The script will:
+* Deploy the database (MariaDB), cache (Redis), and WordPress containers.
+* Wait for database and WordPress auto-initialization/installation to complete.
+* Query the container to verify the running WordPress core version matches the expected version.
+* Perform `curl` tests on the homepage (`/`) and administrative dashboard (`/wp-admin/`).
+* Simulate user login to the administrative panel using a curl cookie jar to verify credentials work and dashboard elements render correctly.
+* Attempt to trigger a core upgrade and assert that the request is successfully blocked (displaying the custom update-disabled wiki link).
+* Verify HTTP status codes and scan the page bodies for PHP/database errors.
+* Automatically clean up containers and volumes after each test.
+
 ### TODO
 * ~Disable core updates~
 * ~Install/update plugins on the fly using wp cli (with versioning)~
