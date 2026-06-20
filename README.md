@@ -138,21 +138,21 @@ RUN set -eux \
 COPY --from=wp-plugins-installer ["/var/www/html/wp-content/plugins", "/var/www/html/wp-content/plugins"]
 ```
 
-### Deployment and Integration Testing
+### End-to-End Testing
 The project includes automated integration tests that deploy specific WordPress version stacks, check the initialization flow, and verify page response and integrity.
 
 To run the tests:
 1. Ensure Docker and Docker Compose are installed.
 2. Run the test script from the repository root:
    ```bash
-   ./hack/tests-util/End_to_End/run.sh
+   ./hack/tests-util/e2e/run.sh
    ```
 
 By default, the script reads all configured versions from [hack/docker-bake-common.hcl](file:///home/xzero/workspace/private/OSS/wordpress/hack/docker-bake-common.hcl) and tests them sequentially by pulling from GHCR.
 
 You can also specify a subset of versions to test:
 ```bash
-./hack/tests-util/End_to_End/run.sh 6.9.4 6.6.2
+./hack/tests-util/e2e/run.sh 6.9.4 6.6.2
 ```
 
 The script will:
